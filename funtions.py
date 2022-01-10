@@ -1,6 +1,6 @@
 from vidgear.gears import CamGear
 
-options = {"CAP_PROP_BUFFERSIZE": 0,'THREADED_QUEUE_MODE': False}
+options = {'THREADED_QUEUE_MODE': False}
 
 def active_cam():
     cap=[[0,1,0],[1,1,0],[2,1,0],[3,1,0],[4,1,0],[5,1,0],[6,1,0],[7,1,0]]

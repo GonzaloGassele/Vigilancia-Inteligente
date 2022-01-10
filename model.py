@@ -9,7 +9,7 @@ def detect():
     model= load('ultralytics/yolov5', 'yolov5x6')# modelo
 
 #configuración del modelo
-    model.conf = 0.75#confidence threshold (0-1)
+    model.conf = 0.8#confidence threshold (0-1)
     model.classes= [0]# detección de personas
 
     cap=f.active_cam()
@@ -23,15 +23,14 @@ def detect():
             for i in frame:
                 img= resize(i[0] ,(0,0),fx=0.3,fy=0.3)
                 texto= i[1]
-                result= model(img)
-                print('1')
-                labels = result.xyxyn[0][:, -1].numpy()
+                result= model(img) 
+                labels = result.xyxyn[0][:, -1].cpu().numpy()
+                
                 if (labels.all()==0):
                     print(texto)
                     img_path= SaveImage(img)
                     t=str(texto[0])
-                    print('***************************')
-                    print('***************************')
+                    
                     send_msj1(t, img_path)
                     send_msj2(t, img_path)
                     send_msj3(t, img_path)
