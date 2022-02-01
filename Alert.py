@@ -1,7 +1,7 @@
 from datetime import datetime
 from cv2 import imwrite
 from pathlib import Path
-from pywhatkit import sendwhats_image
+import telegram
 
 def SaveImage(img):
     date = datetime.now()
@@ -10,23 +10,12 @@ def SaveImage(img):
     img_path= Path('detect/'+year_month+'.png')
     return img_path
 
-def send_msj1(t, img_path):
-    sendwhats_image(phone_no='+5492392611662',#Monitoreo urbano
-                        img_path= img_path,
-                        caption= t,
-                       tab_close=True)
-def send_msj2(t, img_path):
-    sendwhats_image(phone_no='+5492392524855',#Ricardo Machado
-                        img_path= img_path,
-                        caption= t,
-                        tab_close=True)
-def send_msj3(t, img_path):
-   sendwhats_image(phone_no='+5492392489549',# Juan Sereno
-                        img_path= img_path,
-                        caption= t,
-                        tab_close=True)
-def send_msj4(t, img_path):
-    sendwhats_image(phone_no='+5492392315672',#Cel Polo (Brisuela)
-                        img_path= img_path,
-                        caption= t,
-                        tab_close=True)
+bot_token = '5087135434:AAEGb6ZpL_tT2qzkW99XSaVHO7cNipyRbEU'
+bot= telegram.Bot(token= bot_token)
+agenda= ['5054925471','1937390186']
+def telegram_msj(num ,text , img_path):
+    img= open(img_path,'rb')
+    bot.sendPhoto(chat_id= num,
+                photo= img,
+                caption= text)
+

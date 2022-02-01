@@ -1,7 +1,7 @@
 from cv2 import resize
 from torch.hub import load
 import funtions as f
-from Alert import SaveImage , send_msj1,send_msj2,send_msj3, send_msj4
+from Alert import SaveImage , telegram_msj, agenda
 
 
 def detect():
@@ -9,7 +9,7 @@ def detect():
     model= load('ultralytics/yolov5', 'yolov5x6')# modelo
 
 #configuración del modelo
-    model.conf = 0.8#confidence threshold (0-1)
+    model.conf = 0.75#confidence threshold (0-1)
     model.classes= [0]# detección de personas
 
     cap=f.active_cam()
@@ -23,18 +23,16 @@ def detect():
             for i in frame:
                 img= resize(i[0] ,(0,0),fx=0.3,fy=0.3)
                 texto= i[1]
-                result= model(img) 
+                result= model(img)
+                result.render() 
                 labels = result.xyxyn[0][:, -1].cpu().numpy()
                 
                 if (labels.all()==0):
                     print(texto)
                     img_path= SaveImage(img)
                     t=str(texto[0])
-                    
-                    send_msj1(t, img_path)
-                    send_msj2(t, img_path)
-                    send_msj3(t, img_path)
-                    send_msj4(t, img_path)
+                    for tel in agenda:
+                        telegram_msj(tel,t,img_path)
 
 
 detect()
