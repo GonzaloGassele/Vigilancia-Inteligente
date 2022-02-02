@@ -21,18 +21,20 @@ def detect():
             frame=f.read_camera(cap)
         else:
             for i in frame:
-                img= resize(i[0] ,(0,0),fx=0.3,fy=0.3)
-                texto= i[1]
-                result= model(img)
-                result.render() 
-                labels = result.xyxyn[0][:, -1].cpu().numpy()
-                
-                if (labels.all()==0):
-                    print(texto)
-                    img_path= SaveImage(img)
-                    t=str(texto[0])
-                    for tel in agenda:
-                        telegram_msj(tel,t,img_path)
-
+                try:
+                    img= resize(i[0] ,(0,0),fx=0.3,fy=0.3)
+                    texto= i[1]
+                    result= model(img)
+                    result.render() 
+                    labels = result.xyxyn[0][:, -1].cpu().numpy()
+                    
+                    if (labels.all()==0):
+                        print(texto)
+                        img_path= SaveImage(img)
+                        t=str(texto[0])
+                        for tel in agenda:
+                            telegram_msj(tel,t,img_path)
+                except:
+                    pass
 
 detect()
