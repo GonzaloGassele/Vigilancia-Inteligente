@@ -6,12 +6,13 @@ import telegram
 def SaveImage(img):
     date = datetime.now()
     year_month = date.strftime('%Y-%m-%d,%H-%M-%S')
-    imwrite('C:/Users/PCT-02/Proyectos visual studio/repositorios/Vigilancia-inteligente/detect/'+year_month+'.png',img)
+    imwrite('/home/ia1/cv/Proyectos/Vigilancia-Inteligente/detect/'+year_month+'.png',img)
     img_path= Path('detect/'+year_month+'.png')
     return img_path
 
-bot_token = '5265828925:AAHrKJS0mz0AnAciJxOSWQ53aQo69AizEfM'
+bot_token = '5087135434:AAEGb6ZpL_tT2qzkW99XSaVHO7cNipyRbEU'
 bot= telegram.Bot(token= bot_token)
+agenda= ['5054925471','1937390186']
 def telegram_msj(num ,text , img_path):
     img= open(img_path,'rb')
     bot.sendPhoto(chat_id= num,
