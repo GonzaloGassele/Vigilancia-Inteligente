@@ -90,4 +90,3 @@ while True:
     if hour<8 and hour>12:
         for i in range(len(camaras)):
             camaras[i].apagarCamara()    
-        #sp.Popen.terminate(extProc)# cierre del proceso

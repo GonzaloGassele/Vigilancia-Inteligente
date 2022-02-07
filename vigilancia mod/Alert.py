@@ -17,4 +17,3 @@ def telegram_msj(num ,text , img_path):
     bot.sendPhoto(chat_id= num,
                 photo= img,
                 caption= text)
-
