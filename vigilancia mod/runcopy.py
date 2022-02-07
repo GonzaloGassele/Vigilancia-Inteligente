@@ -1,11 +1,10 @@
 import subprocess as sp
 from datetime import datetime
-
-import telegram
-from clases import agregarCamara, camara, telefono, camaras, telefonos
+from clases import camara, telefono, camaras, telefonos
 from torch.hub import load
-from Alert import SaveImage , telegram_msj, bot
+from Alert import SaveImage , telegram_msj
 from cv2 import resize
+from funciones import camaraAsignar, camaraRemover
 import sys
 
 
@@ -35,6 +34,17 @@ camaras.append(camara('Entrada de Pacheco 2','rtsp://contralor:Villegas555@192.1
 telefonos.append(telefono(5492392502978,'Gonzalo',1645237568))
 telefonos.append(telefono(0,'M',0))
 
+
+camaraAsignar('Frente','Gonzalo')
+camaraAsignar('Galpon','Gonzalo')
+camaraAsignar('Estacionamiento de emision','Gonzalo')
+camaraAsignar('Costado del Polo','Gonzalo')
+for i in range(len(telefonos)):
+    telefonos[i].getDatos()
+
+camaraRemover('Estacionamiento de emision','Gonzalo')
+for i in range(len(telefonos)):
+    telefonos[i].getDatos()
 
 model= load('ultralytics/yolov5', 'yolov5s6')# modelo
 
@@ -67,9 +77,9 @@ while True:
                             img_path= SaveImage(img)
                             t=str('Hay una persona en la camara de '+ camaras[i].nombre)
                             for tel in range(len(telefonos)):
-                                telegram_msj(telefonos[tel].chatid,t,img_path)
-                                bot.deleteChatPhoto(-1001741299379, timeout=1)
-                                print("borro las fotos")
+                                for k in range(len(telefonos[tel].camaras)):
+                                    if telefonos[tel].camaras[k] == camaras[i].nombre:
+                                        telegram_msj(telefonos[tel].chatid,t,img_path)
                     except:
                         print("ocurrio un error: ")
                         e = sys.exc_info()[1]

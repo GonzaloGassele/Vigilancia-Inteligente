@@ -49,19 +49,21 @@ class telefono():
         self.camaras = []
     
     def getDatos(self):
-        print(f"Numero: {self.numero} \n")
-        print(f"Nombre: {self.nombre} \n")
-        print(f"Chat ID: {self.chatid} \n")
+        print(f"Numero: {self.numero}")
+        print(f"Nombre: {self.nombre}")
+        print(f"Chat ID: {self.chatid}")
+        print(f"Camaras asignadas: {self.camaras}")
 
-    def asignarCamara(self, nombreCam, nombre):
-        if nombre==self.nombre:
-            self.camaras.append(nombreCam)
+    def asignarCamara(self, nombreCam):
+        self.camaras.append(nombreCam)
     
-    def revocarCamara(self, nombreCam, nombre):
-        if nombre==self.nombre:
-            for i in range(len(camaras)):
-                if self.camaras[i]==nombreCam:
-                    self.camaras.remove(nombreCam)
+    def removerCamara(self, nombreCam):
+        count = 0 
+        while count < len(self.camaras):
+            if self.camaras[count]==nombreCam:
+                self.camaras.remove(nombreCam)
+                break
+            count += 1
 
 
 
