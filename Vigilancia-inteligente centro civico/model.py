@@ -32,8 +32,8 @@ def detect():
                         print(texto)
                         img_path= SaveImage(img)
                         t=str(texto[0])
-                        for tel in agenda:
-                            telegram_msj(tel,t,img_path)
+                        #for tel in agenda:
+                            #telegram_msj(tel,t,img_path)
                 except:
                     pass
 

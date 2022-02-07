@@ -6,7 +6,7 @@ import telegram
 def SaveImage(img):
     date = datetime.now()
     year_month = date.strftime('%Y-%m-%d,%H-%M-%S')
-    imwrite('/home/ia1/cv/Proyectos/Vigilancia-Inteligente/detect/'+year_month+'.png',img)
+    imwrite('/home/soporte/Vigilancia-inteligente centro civico/detect/'+year_month+'.png',img)
     img_path= Path('detect/'+year_month+'.png')
     return img_path
 
