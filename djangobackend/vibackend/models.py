@@ -29,9 +29,9 @@ class camaraManager(models.Manager):
 class camara(models.Model):
     nombre = models.CharField(max_length=100)
     source = models.CharField(max_length=255)
-    estado = models.BooleanField()
+    estado = models.BooleanField(default=False, blank=True)
     
-    camaras= camaraManager()
+    '''camaras= camaraManager()'''
     
     def __str__(self):
         return self.nombre
@@ -41,7 +41,7 @@ class telefono(models.Model):
     numero = models.CharField(max_length=20)
     nombre = models.CharField(max_length=60)
     chatid = models.CharField(max_length=20)
-    camaras = models.ManyToManyField(camara)
+    camtel = models.ManyToManyField(camara)
 
     
     def __str__(self):
