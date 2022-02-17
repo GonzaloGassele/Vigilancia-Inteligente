@@ -7,4 +7,5 @@ app_name = 'vibackend'
 urlpatterns = [
     path('', views.index, name='index'),
     path('camara/', CamaraView.as_view(), name='camaras_list'),
+    path('camara/<int:id>', CamaraView.as_view(), name='camaras_process')
 ]

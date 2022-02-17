@@ -1,3 +1,4 @@
+from email import message
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 from .models import camara, telefono
@@ -52,6 +53,13 @@ class CamaraView(View):
         return JsonResponse(mensaje)
         
 
-    def delete(self, request):
-        pass
+    def delete(self, request, id):
+        camaras = list(camara.objects.filter(id=id).values())
+        if len(camaras)>0:
+            camara.objects.filter(id=id).delete()
+            mensaje = {'message': "exitoso"}
+        else:
+            mensaje = {'message': "Camara no encontrada"}
+        return JsonResponse(mensaje)
+
     
