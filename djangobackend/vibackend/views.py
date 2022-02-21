@@ -1,7 +1,7 @@
 from email import message
 from django.http import HttpResponse, JsonResponse
 from django.views import View
-from .models import camara, telefono
+from .models import Camara, Telefono
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -18,7 +18,7 @@ class CamaraView(View):
 
     def get(self, request, id=0):
         if (id>0):
-            camaras = list(camara.objects.filter(id=id).values())
+            camaras = list(Camara.objects.filter(id=id).values())
             if len(camaras)>0:
                 cam=camaras[0]
                 mensaje = {'message': "exitoso", 'camaras': cam}
@@ -26,7 +26,7 @@ class CamaraView(View):
                 mensaje = {'message': "camara no encontrada"}
             return JsonResponse(mensaje)
         else:
-            camaras = list(camara.objects.values())
+            camaras = list(Camara.objects.values())
             if len(camaras) > 0:
                 mensaje = {'message': "exitoso", 'camaras': camaras}
             else:
@@ -35,15 +35,15 @@ class CamaraView(View):
 
     def post(self, request):
         carga= json.loads(request.body.decode('utf-8'))
-        camara.objects.create(nombre=carga['nombre'],source=carga['source'])
+        Camara.objects.create(nombre=carga['nombre'],source=carga['source'])
         mensaje = {'message': "exitoso"}
         return JsonResponse(mensaje)
 
     def put(self, request, id=0):
         datos = json.loads(request.body)
-        camaras = list(camara.objects.filter(id=id).values())
+        camaras = list(Camara.objects.filter(id=id).values())
         if len(camaras)>0:
-            cam=camara.objects.get(id=id)
+            cam=Camara.objects.get(id=id)
             cam.nombre=datos['nombre']
             cam.source=datos['source']
             cam.save()
@@ -54,12 +54,64 @@ class CamaraView(View):
         
 
     def delete(self, request, id):
-        camaras = list(camara.objects.filter(id=id).values())
+        camaras = list(Camara.objects.filter(id=id).values())
         if len(camaras)>0:
-            camara.objects.filter(id=id).delete()
+            Camara.objects.filter(id=id).delete()
             mensaje = {'message': "exitoso"}
         else:
             mensaje = {'message': "Camara no encontrada"}
         return JsonResponse(mensaje)
 
     
+class TelefonoView(View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, id=0):
+        if (id>0):
+            telefonos = list(Telefono.objects.filter(id=id).values())
+            if len(telefonos)>0:
+                tel=telefonos[0]
+                mensaje = {'message': "exitoso", 'telefonos': tel}
+            else:
+                mensaje = {'message': "telefono no encontrado"}
+            return JsonResponse(mensaje)
+        else:
+            telefonos = list(Telefono.objects.values())
+            if len(telefonos) > 0:
+                mensaje = {'message': "exitoso", 'telefonos': telefonos}
+            else:
+                mensaje = {'message': "telefono no encontrado"}
+            return JsonResponse(mensaje)
+
+    def post(self, request):
+        carga= json.loads(request.body.decode('utf-8'))
+        Telefono.objects.create(numero=carga['numero'],nombre=carga['nombre'],chatid=carga['chatid'])
+        mensaje = {'message': "exitoso"}
+        return JsonResponse(mensaje)
+
+    def put(self, request, id=0):
+        datos = json.loads(request.body)
+        telefonos = list(Telefono.objects.filter(id=id).values())
+        if len(telefonos)>0:
+            tel=Telefono.objects.get(id=id)
+            tel.nombre=datos['numero']
+            tel.nombre=datos['nombre']
+            tel.source=datos['chatid']
+            tel.save()
+            mensaje = {'message': "exitoso"}
+        else:
+            mensaje = {'message': "telefono no encontrado"}
+        return JsonResponse(mensaje)
+        
+
+    def delete(self, request, id):
+        telefonos = list(Telefono.objects.filter(id=id).values())
+        if len(telefonos)>0:
+            Telefono.objects.filter(id=id).delete()
+            mensaje = {'message': "exitoso"}
+        else:
+            mensaje = {'message': "telefono no encontrado"}
+        return JsonResponse(mensaje)
