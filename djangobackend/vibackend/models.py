@@ -27,7 +27,8 @@ class Horario(models.Model):
     Horafin = models.TimeField()
 
     def __str__(self):
-        return self.dia.strftime('%A')
+        diahora= self.dia.strftime('%A')+" "+str(self.Horainicio)+" "+str(self.Horafin)
+        return diahora
 
 class Skedul(models.Model):
     idHorario = models.ForeignKey(Horario, on_delete=models.CASCADE)
@@ -53,7 +54,7 @@ class Foto(models.Model):
     camname = models.ForeignKey(Camara, on_delete=models.CASCADE)
     
     def __str__(self):
-        return self.idFoto
+        return str(self.idFoto)
 
 class Telefono(models.Model):
     numero = models.CharField(max_length=20)
@@ -68,7 +69,7 @@ class Telefono(models.Model):
 class Camtel(models.Model):
     idCamara = models.ForeignKey(Camara, on_delete=models.CASCADE)
     idTelefono = models.ForeignKey(Telefono, on_delete=models.CASCADE)
-    idSkedul = models.ForeignKey(Skedul, on_delete=models.CASCADE)
+    idSkedul = models.ForeignKey(Skedul, on_delete=models.CASCADE, blank=True)
 
     def __str__(self):
         camret=str(self.idCamara)+" "+str(self.idTelefono)+" "+str(self.idSkedul)
