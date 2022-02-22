@@ -8,7 +8,7 @@ def SaveImage(img):
     year_month = date.strftime('%Y-%m-%d,%H-%M-%S')
     imwrite('/home/ia1/cv/Proyectos/Vigilancia-Inteligente/Vigilancia Inteligente - Polo/detect/'+year_month+'.png',img)
     img_path= Path('detect/'+year_month+'.png')
-    return img_path
+    return img_path, year_month
 
 bot_token = '5087135434:AAEGb6ZpL_tT2qzkW99XSaVHO7cNipyRbEU'
 bot= telegram.Bot(token= bot_token)
