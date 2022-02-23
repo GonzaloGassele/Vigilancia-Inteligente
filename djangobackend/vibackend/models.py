@@ -2,37 +2,21 @@ from http.client import LENGTH_REQUIRED
 from django.db import models
 from telegram import User
 from vidgear.gears import CamGear
-from django.contrib.auth.models import AbstractBaseUser
-from .managers import UsuarioManager
-
-
-class Usuario(AbstractBaseUser):
-    username = models.CharField(max_length=40)
-    email = models.EmailField(unique=True)
-    objects= UsuarioManager()
-
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
-
-    def get_full_name(self):
-        full_name = "{0}".format(self.username)
-        return full_name.strip()
-
-    def get_short_name(self):
-        return self.username
+from django.contrib.auth.models import User, UserManager
+from .managers import CamaraManager, FotoManager
 
 class Horario(models.Model):
-    dia = models.DateField()
+    dia = models.IntegerField()
     Horainicio = models.TimeField()
     Horafin = models.TimeField()
 
     def __str__(self):
-        diahora= self.dia.strftime('%A')+" "+str(self.Horainicio)+" "+str(self.Horafin)
+        diahora= str(self.dia)+" "+str(self.Horainicio)+" "+str(self.Horafin)
         return diahora
 
 class Skedul(models.Model):
     idHorario = models.ForeignKey(Horario, on_delete=models.CASCADE)
-    idUsuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    idUsuario = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         horasuario=str(self.idHorario)+" "+str(self.idUsuario)
@@ -42,7 +26,8 @@ class Camara(models.Model):
     nombre = models.CharField(max_length=100)
     source = models.CharField(max_length=255)
     estado = models.BooleanField(default=False, blank=True)
-    usercam = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    usercam = models.ForeignKey(User, on_delete=models.CASCADE)
+    objects= CamaraManager()
     
     def __str__(self):
         return self.nombre
@@ -50,8 +35,10 @@ class Camara(models.Model):
 
 class Foto(models.Model):
     idFoto = models.IntegerField(primary_key=True)
+    path = models.CharField(max_length=255, editable=False)
     etiqueta = models.CharField(max_length=2,null=True, blank=True)
     camname = models.ForeignKey(Camara, on_delete=models.CASCADE)
+    objects= FotoManager()
     
     def __str__(self):
         return str(self.idFoto)
@@ -60,7 +47,7 @@ class Telefono(models.Model):
     numero = models.CharField(max_length=20)
     nombre = models.CharField(max_length=60)
     chatid = models.CharField(max_length=20)
-    usertel = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    usertel = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.nombre
