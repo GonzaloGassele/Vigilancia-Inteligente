@@ -23,13 +23,18 @@
         <div class="card shadow-2-strong" style="border-radius: 1rem;">
           <div class="card-body p-5 text-center">
 
-            <h3 class="mb-5">Login</h3>
+            <h3 class="mb-5" >Registro</h3>
 
-  <form action="/vibackend/autenticar/" method="POST">{% csrf_token %}
+  <form action="/vibackend/autenticarRegistro/" method="POST">{% csrf_token %}
 
             <div class="form-outline mb-4">
               <label class="form-label" for="username">Usuario</label>
               <input type="text" id="username" name="username" class="form-control form-control-lg" placeholder = "Nombre de usuario" />
+            </div>
+            
+            <div class="form-outline mb-4">
+              <label class="form-label" for="mail">E-mail</label>
+              <input type="text" id="mail" name="mail" class="form-control form-control-lg" placeholder = "usuario@mail.com" />
             </div>
 
             <div class="form-outline mb-4">
@@ -37,12 +42,8 @@
               <input type="password" id="password" name="password" class="form-control form-control-lg" placeholder = "Contraseña" />
             </div>
 
-            <!-- Checkbox -->
-            <div class="form-check d-flex justify-content-start mb-4">
-              <a href="/vibackend/registrar/" class="link-dark">¿No tiene usuario? Regístrese aquí</a>
-            </div>
 
-            <button class="btn btn-primary btn-lg btn-block" type="submit">Ingresar</button>
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Registrarse</button>
 
 </form>
 

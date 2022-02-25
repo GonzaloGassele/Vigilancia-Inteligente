@@ -2,17 +2,47 @@ from django.http import HttpResponse, JsonResponse
 from django.views import View
 from .models import Camara, Skedul, Telefono, Horario, Alerta, Foto
 from django.shortcuts import render, redirect
-from django.utils.decorators import method_decorator
 from django.contrib import messages
-from django.views.decorators.csrf import csrf_exempt
-import json
 from vidgear.gears import CamGear
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import AbstractUser, UserManager, User
 
 def index(request):
     return HttpResponse("Hello, world. You're at the Vigilancia Inteligente index.")
 
+def autenticar(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    usuario = authenticate(request, username=username, password=password)
+    if usuario is not None:
+        login(request, usuario)
+        return redirect('/vibackend/telefono/')
+    else:
+        return redirect('/vibackend/login/')
+ 
+def loguear(request):
+    return render(request, "login.html")
 
-class CamaraView(View):
+def autenticarRegistro(request):
+    username = request.POST['username']
+    email = request.POST['mail']
+    password = request.POST['password']
+    usuario = User.objects.create_user(username=username, email=email, password=password)
+    return redirect('/vibackend/login/')
+ 
+def registrar(request):
+    return render(request, "registro.html")
+
+def desloguear(request):
+    logout(request)
+    # Redirect to a success page.
+    return redirect('/vibackend/login/')
+
+class CamaraView(LoginRequiredMixin ,View):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
 
     def home(request):
         camaraListados = Camara.objects.all()
@@ -81,54 +111,92 @@ class CamaraView(View):
             messages.error(request, f'Camara {camara.nombre} ya estaba apagada')
         return redirect('/')
 
-class TelefonoView(View):
+
+############################################################
+class TelefonoView(LoginRequiredMixin, View):
+    login_url = '/vibackend/login/'
+    redirect_field_name = 'redirect_to'
 
     def home(request):
-        telefonoListados = Telefono.objects.all()
-        messages.success(request, '¡Telefonos listados!')
-        return render(request, "gestionTelefonos.html", {"Telefonos": telefonoListados})
+        telefonoListados = Telefono.objects.filter(usertel=request.user)
+        #messages.success(request, '¡Telefonos listados!')
+        print(telefonoListados)
+        return render(request, "gestionTelefonos.html", {'telefono': telefonoListados,})
 
 
     def registrarTelefono(request):
-        numero = request.POST['numNumero']
         nombre = request.POST['txtNombre']
-        chatid = request.POST['numChatid']
+        numero = request.POST['txtNumero']
         telefono = Telefono.objects.create(
-            numero=numero, nombre=nombre, chatid=chatid)
-        messages.success(request, '¡Telefono registrado!')
-        return redirect('/')
+            nombre = nombre, numero = numero, usertel=request.user
+        )
+        return redirect('/vibackend/telefono/')
 
+    def eliminarTelefono(request, idTelefono):
+        telefono = Telefono.objects.filter(usertel=request.user).get(idTelefono = idTelefono)
+        telefono.delete()
+        return redirect('/vibackend/telefono/')
 
-    def edicionTelefono(request, nombre):
-        telefono = Telefono.objects.get(nombre=nombre)
-        return render(request, "edicionTelefono.html", {"Telefono": telefono})
-
+    def edicionTelefono(request, idTelefono):
+        telefono = Telefono.objects.filter(usertel=request.user).get(idTelefono = idTelefono)
+        return render(request, "edicionTelefono.html", {"telefono": telefono})
 
     def editarTelefono(request):
-        numero = request.POST['numNumero']
         nombre = request.POST['txtNombre']
-        chatid = request.POST['numChatid']
-
-        telefono = Telefono.objects.get(nombre=nombre)
-        telefono.numero = numero
+        numero = request.POST['txtNumero']
+        idTelefono = request.POST['idTelefono']
+        telefono = Telefono.objects.filter(usertel=request.user).get(idTelefono = idTelefono)
         telefono.nombre = nombre
-        telefono.chatid = chatid
+        telefono.numero = numero
         telefono.save()
 
-        messages.success(request, '¡Telefono actualizado!')
+        return redirect('/vibackend/telefono/')
+'''@login_required()
+def home(request):
+    telefonoListados = Telefono.objects.all()
+    #messages.success(request, '¡Telefonos listados!')
+    print(telefonoListados)
+    return render(request, "gestionTelefonos.html", {'telefono': telefonoListados,})
 
-        return redirect('/')
+
+def registrarTelefono(request):
+    nombre = request.POST['txtNombre']
+    numero = request.POST['txtNumero']
+    username = None
+    if request.user.is_authenticated():
+        username = request.user.username
+    usertel = username
+    telefono = Telefono.objects.create(
+        nombre = nombre, numero = numero, usertel=usertel
+    )
+    return redirect('/vibackend/telefono/home')
+
+def eliminarTelefono(request, idTelefono):
+    telefono = Telefono.objects.get(idTelefono = idTelefono)
+    telefono.delete()
+    return redirect('/')
+
+def edicionTelefono(request, idTelefono):
+    telefono = Telefono.objects.get(idTelefono = idTelefono)
+    return render(request, "edicionTelefono.html", {"telefono": telefono})
+
+def editarTelefono(request):
+    nombre = request.POST['txtNombre']
+    numero = request.POST['txtNumero']
+    idTelefono = request.POST['idTelefono']
 
 
-    def eliminarTelefono(request, nombre):
-        telefono = Telefono.objects.get(nombre=nombre)
-        telefono.delete()
+    telefono = Telefono.objects.get(idTelefono = idTelefono)
+    telefono.nombre = nombre
+    telefono.numero = numero
+    telefono.save()
 
-        messages.success(request, '¡Telefono eliminado!')
+    return redirect('/')'''
+#####################################################################################
 
-        return redirect('/')
-
-class HorarioView(View):
+class HorarioView(LoginRequiredMixin, View):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
 
     def home(request):
         horarioListados = Horario.objects.all()
@@ -176,7 +244,9 @@ class HorarioView(View):
         return redirect('/')
 
 
-class AlertaView(View):
+class AlertaView(LoginRequiredMixin, View):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
 
     def home(request):
         alertaListados = Alerta.objects.all()
@@ -221,7 +291,9 @@ class AlertaView(View):
         return redirect('/')
 
 
-class FotoView(View):
+class FotoView(LoginRequiredMixin, View):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
 
     def home(request):
         fotoListados = Foto.objects.all()
