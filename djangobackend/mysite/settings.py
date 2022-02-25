@@ -132,4 +132,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL= "/telefono/home"
+LOGIN_REDIRECT_URL= "/vibackend/telefono/home/"
+
+LOGIN_URL = "/vibackend/login/"
