@@ -1,0 +1,36 @@
+{% extends "./base.html" %}
+
+{% block title %} Gestión de Telefonos {% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <h2>Edición de telefono</h2>
+        <div class="card">
+            <div class="card-body">
+                <form action="/vibackend/telefono/editarTelefono/" method="POST">{% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" id="txtNombre" name="txtNombre" value = {{telefono.nombre}} class="form-control" placeholder="Nombre"
+                            maxlength="50" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="txtNumero" name="txtNumero" value = {{telefono.numero}} class="form-control" placeholder="Telefono"
+                            minlength="10" maxlength="20" required>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" id="idTelefono" name="idTelefono" value = {{telefono.idTelefono}} class="form-control" placeholder="idTelefono"
+                            minlength="1" maxlength="20" style="display:none;" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success btn-block text-white">Guardar</button>
+                    </div>
+                </form>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

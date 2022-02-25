@@ -1,0 +1,63 @@
+{% extends "./base.html" %}
+
+{% block title %} Gestión de Telefonos {% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-dismissible alert-success">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong class="text-dark">{{ message }}</strong>
+        </div>
+        {% endfor %}
+        {% endif %}
+        <h2 class>Gestión de Telefonos</h2>
+        <div class="card">
+            <div class="card-body">
+                <form action="registrarTelefono/" method="POST">{% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" id="txtNombre" name="txtNombre" class="form-control" placeholder="Nombre"
+                            maxlength="50" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="txtNumero" name="txtNumero" class="form-control" placeholder="Telefono"
+                            minlength="10" maxlength="20" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success btn-block text-white">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+        <h2>Listado de Telefonos</h2>
+        <div class="table-responsive py-2">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Telefono</th>
+                        <th>Nombre</th>
+                        <th colspan="2">Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in telefono %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{t.nombre}}</td>
+                        <td>{{t.numero}}</td>
+                        <td><a href="edicionTelefono/{{t.idTelefono}}" class="btn btn-info">Editar</a></td>
+                        <td><a href="eliminarTelefono/{{t.idTelefono}}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
