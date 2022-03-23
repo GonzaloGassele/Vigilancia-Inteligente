@@ -6,7 +6,8 @@ from . import views
 
 app_name = 'vibackend'
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('index/', login_required(views.index)),
+    path('index/arranque/', login_required(views.arranque)),
 
     path('login/', views.loguear),
     path('autenticar/', views.autenticar),
@@ -14,11 +15,13 @@ urlpatterns = [
     path('autenticarRegistro/', views.autenticarRegistro),
     path('logout/', views.desloguear),
 
-    path('camara/home', CamaraView.home, name='camaras_list'),
-    path('camara/registrarCamara/', CamaraView.registrarCamara, name='camaras_register'),
-    path('camara/edicionCamara/<nombre>', CamaraView.edicionCamara, name='camaras_edition'),
-    path('camara/editarCamara/', CamaraView.editarCamara, name='camaras_edit'),
-    path('camara/eliminarCamara/<nombre>', CamaraView.eliminarCamara, name='camaras_delete'),
+    path('camara/', login_required(CamaraView.home)),
+    path('camara/registrarCamara/', login_required(CamaraView.registrarCamara)),
+    path('camara/edicionCamara/<idCamara>', login_required(CamaraView.edicionCamara)),
+    path('camara/editarCamara/', login_required(CamaraView.editarCamara)),
+    path('camara/eliminarCamara/<idCamara>', login_required(CamaraView.eliminarCamara)),
+    path('camara/apagarCamara/<idCamara>', login_required(CamaraView.apagarCamara)),
+    path('camara/prenderCamara/<idCamara>', login_required(CamaraView.prenderCamara)),
 
     path('telefono/', login_required(TelefonoView.home)),
     path('telefono/registrarTelefono/', login_required(TelefonoView.registrarTelefono)),
@@ -26,27 +29,13 @@ urlpatterns = [
     path('telefono/editarTelefono/', login_required(TelefonoView.editarTelefono)),
     path('telefono/eliminarTelefono/<idTelefono>', login_required(TelefonoView.eliminarTelefono)),
 
-    path('horario/home/', HorarioView.home, name='horarios_list'),
-    path('horario/registrarHorario/', HorarioView.registrarHorario, name='horarios_register'),
-    path('horario/edicionHorario/<int:id>', HorarioView.edicionHorario, name='horarios_edition'),
-    path('horario/editarHorario/<int:id>', HorarioView.editarHorario, name='horarios_edit'),
-    path('horario/eliminarHorario/<int:id>', HorarioView.eliminarHorario, name='horarios_delete'),
+    path('horario/', login_required(HorarioView.home)),
+    path('horario/editarHorario/', login_required(HorarioView.editarHorario)),
 
-    path('alerta/home', AlertaView.home, name='alertas_list'),
-    path('alerta/registrarAlerta/', AlertaView.registrarAlerta, name='alertas_register'),
-    path('alerta/edicionAlerta/<int:id>', AlertaView.edicionAlerta, name='alertas_edition'),
-    path('alerta/editarAlerta/<int:id>', AlertaView.editarAlerta, name='alertas_edit'),
-    path('alerta/eliminarAlerta/<int:id>', AlertaView.eliminarAlerta, name='alertas_delete'),
+    path('alerta/', login_required(AlertaView.home)),
+    path('alerta/fullTime/<idTelefono>/', login_required(AlertaView.fullTime)),
+    path('alerta/editarAlerta/<idCamtel>', login_required(AlertaView.editarAlerta)),
 
-    path('foto/home', FotoView.home, name='fotos_list'),
-    path('foto/registrarFoto/', FotoView.registrarFoto, name='fotos_register'),
-    path('foto/edicionFoto/<int:id>', FotoView.edicionFoto, name='fotos_edition'),
-    path('foto/editarFoto/<int:id>', FotoView.editarFoto, name='fotos_edit'),
-    path('foto/eliminarFoto/<int:id>', FotoView.eliminarFoto, name='fotos_delete')
-    
-    #path('telefono/home/', views.home),
-    #path('telefono/registrarTelefono/', views.registrarTelefono),
-    #path('telefono/edicionTelefono/<nombre>', views.edicionTelefono),
-    #path('telefono/editarTelefono/', views.editarTelefono),
-    #path('telefono/eliminarTelefono/<nombre>', views.eliminarTelefono),
+    path('pruebaFoto/', login_required(FotoView.pruebaFoto), name = 'pruebaFoto'),
+    path('pruebaFoto/confirmarFoto/<idFoto>/<confirmacion>/<pagina>', login_required(FotoView.confirmarFoto), name='confirmarFoto')
 ]

@@ -1,5 +1,3 @@
-from multiprocessing.sharedctypes import Value
-from django.contrib.auth.models import BaseUserManager
 from django.db import models
 from vidgear.gears import CamGear
 from datetime import datetime
@@ -33,18 +31,26 @@ class FotoManager(models.Manager):
 
 
 class AlertaManager(models.Manager):
+
+    
+    '''def monitoreo(self):
+            date = datetime.now()
+            dia = int(date.strftime('%w'))
+            hour= int(date.strftime('%H'))
+            minute=int(date.strftime('%M'))
+
+            if dia==self.idCamtelHorario.idHorario.Dia
+
+            listhoraini=self.idCamtelHorario.idHorario.Horainicio.split(':')
+            horaini = int (listhoraini[0])
+            minini = int (listhoraini[1])
+            listhorafin=self.idCamtelHorario.idHorario.Horafin.split(':')
+            horafin = int (listhorafin[0])
+            minfin = int (listhorafin[1])
+
+            if (hour>=horaini and hour<=horafin) and (minute>=minini and minute<=minfin):'''
+
     def telegram_msj(num ,text , img_path):
         img= open(img_path,'rb')
         bot.sendPhoto(chat_id= num,photo= img,caption= text)
 
-
-
-# class CamtelManager(models.Manager):
-#     def crear_camara(self, nombre, source):
-#         if not source:
-#             raise ValueError('Camara debe tener una direccion source')
-        
-#         camara = self.model(nombre=nombre)
-#         camara = self.model(source=source)
-#         camara.save()
-#         return camara

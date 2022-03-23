@@ -1,28 +1,26 @@
-from http.client import LENGTH_REQUIRED
 from django.db import models
 from telegram import User
-from vidgear.gears import CamGear
-from django.contrib.auth.models import User, UserManager
-from .managers import CamaraManager, FotoManager
+from django.contrib.auth.models import User
+from .managers import AlertaManager, CamaraManager
+from datetime import datetime
+from cv2 import imwrite
+from pathlib import Path
+
+class Dia(models.Model):
+    idDia= models.AutoField(primary_key=True)
+    Dia = models.CharField(max_length=20)
 
 class Horario(models.Model):
     idHorario = models.AutoField(primary_key=True)
-    dia = models.IntegerField()
-    Horainicio = models.TimeField()
-    Horafin = models.TimeField()
-
-    def __str__(self):
-        diahora= str(self.dia)+" "+str(self.Horainicio)+" "+str(self.Horafin)
-        return diahora
-
-class Skedul(models.Model):
-    idSkedul = models.AutoField(primary_key=True)
-    idHorario = models.ForeignKey(Horario, on_delete=models.CASCADE)
+    diaHorario = models.ForeignKey(Dia, on_delete=models.CASCADE)
+    Horainicio = models.CharField(max_length=5,default="00:00")
+    Horafin = models.CharField(max_length=5,default="23:59")
     idUsuario = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        horasuario=str(self.idHorario)+" "+str(self.idUsuario)
-        return horasuario
+        diahora= str(self.diaHorario.Dia)+" "+str(self.Horainicio)+" "+str(self.Horafin)
+        return diahora
+
 
 class Camara(models.Model):
     idCamara = models.AutoField(primary_key=True)    
@@ -33,18 +31,23 @@ class Camara(models.Model):
     objects= CamaraManager()
     
     def __str__(self):
-        return self.nombre
-
+        return '%s, %s' % (self.nombre, self.source)
 
 class Foto(models.Model):
     idFoto = models.AutoField(primary_key=True)
-    path = models.CharField(max_length=255, editable=False)
-    etiqueta = models.CharField(max_length=2,null=True, blank=True)
+    path = models.ImageField(max_length=500, null = True, blank=True, upload_to='media/')
+    etiqueta = models.BooleanField(null=True, blank=True)
     camname = models.ForeignKey(Camara, on_delete=models.CASCADE)
-    objects= FotoManager()
+    
+    '''def SaveImage(self, img):
+        date = datetime.now()
+        year_month = date.strftime('%Y-%m-%d,%H-%M-%S')
+        imwrite('media/'+year_month+'.jpg',img)
+        self.path= Path('media/'+year_month+'.jpg')
+        return self.path'''
     
     def __str__(self):
-        return str(self.idFoto)
+        return '%s, %s, %s' % (self.idFoto, self.etiqueta, self.camname)
 
 class Telefono(models.Model):
     idTelefono = models.AutoField(primary_key=True)
@@ -52,6 +55,7 @@ class Telefono(models.Model):
     nombre = models.CharField(max_length=60)
     chatid = models.CharField(max_length=20, blank=True)
     usertel = models.ForeignKey(User, on_delete=models.CASCADE)
+    fullDay = models.BooleanField(default=False, blank=True)
 
     def __str__(self):
         return '%s, %s' % (self.nombre, self.numero)
@@ -61,17 +65,25 @@ class Camtel(models.Model):
     idCamtel = models.AutoField(primary_key=True)
     idCamara = models.ForeignKey(Camara, on_delete=models.CASCADE)
     idTelefono = models.ForeignKey(Telefono, on_delete=models.CASCADE)
-    idSkedul = models.ForeignKey(Skedul, on_delete=models.CASCADE, blank=True)
+    idUsuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    activo = models.BooleanField(default=False, blank=True)
 
     def __str__(self):
-        camret=str(self.idCamara)+" "+str(self.idTelefono)+" "+str(self.idSkedul)
-        return camret
+        return '%s' % (self.idCamtel)
+
+class Camtelhorario(models.Model):
+    idCamtelHorario = models.AutoField(primary_key=True)
+    idCamtel = models.ForeignKey(Camtel, on_delete=models.CASCADE)
+    idHorario = models.ForeignKey(Horario, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '%s, %s, %s' % (self.idCamtelHorario, self.idCamtel, self.idHorario)
 
 class Alerta(models.Model):
     idAlerta = models.AutoField(primary_key=True)
     idFoto = models.ForeignKey(Foto, on_delete=models.CASCADE, null=True, blank=True)
-    idCamtel = models.ForeignKey(Camtel, on_delete=models.CASCADE)
+    idCamtelHorario = models.ForeignKey(Camtelhorario, on_delete=models.CASCADE)
+    objects = AlertaManager()
 
     def __str__(self):
-        alereturn=str(self.id)+" "+str(self.idCamtel)
-        return alereturn
+        return '%s, %s, %s' % (self.idAlerta, self.idCamtelHorario, self.idFoto)
