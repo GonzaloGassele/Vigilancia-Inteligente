@@ -1,0 +1,120 @@
+{% extends "./base.html" %}
+
+{% block title %} Edicion de Camaras {% endblock %}
+
+{% block body %}
+    <div class="container-fluid py-3">
+    {%  for t in telefono  %}
+    <div class="row py-2 ">
+                    <div class="col-sm px-2">
+                    <div class="card">
+                        <div class="card-header no-border">
+                            <h5 class="card-title">Telefono</h5>
+                        </div>
+                        <div class="card-body">
+                            <p style="font-size:1.5rem; align-self: center; padding-bottom: 5px;">Nombre: {{t.nombre}}</p>
+                            <p style="align-self: center; padding-bottom: 5px;">Numero: {{t.numero}}</p>
+                        </div>
+
+                    </div>
+        </div>
+
+
+        <div class="col-sm px-2">
+            <div class="card">
+                <div class="card-header no-border">
+                    <h5 class="card-title">Camaras</h5>
+                </div>
+                <div class="card-body ">
+                    {% for c in camtel %}
+                        {% if c.idTelefono.idTelefono is t.idTelefono and c.activo is False%}
+                            <div class="btn-group">
+                                <div class="row">
+                                    <div style="padding: 0px 20px; margin: 5px;">
+                                        <span >
+                                            {{c.idCamara.nombre}}
+                                        </span>
+                                    </div>
+                                    <div style="display:flex;">
+                                        <a href="#" class="btn btn-primary active" aria-current="page" aria-disabled="true" style="margin: 5px;">No Monitorear</a>
+                                        <a href="editarAlerta/{{c.idCamtel}}" class="btn btn-primary" style="margin: 5px;">Monitorear</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        {% elif c.idTelefono.idTelefono is t.idTelefono and c.activo is True %}
+                            <div class="btn-group">
+                                <div class="row">
+                                    <div style="padding-right: 20px; margin: 5px;">
+                                        <span>
+                                            {{c.idCamara.nombre}}
+                                        </span>
+                                    </div>
+                                <div style="display:flex;">
+                                    <a href="editarAlerta/{{c.idCamtel}}" class="btn btn-primary" aria-current="page" style="margin: 5px;">No Monitorear</a>
+                                    <a href="#" class="btn btn-primary active" aria-disabled="true" style="margin: 5px;">Monitorear</a>
+                                </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+        
+        
+        
+        <div class="col-sm px-2">
+            
+            <div class="card">
+                <div class="card-header no-border">
+                    <h5 class="card-title">Horarios</h5>
+                </div>
+                <div class="card-body">
+                    <div class="custom-control custom-switch py-1">
+                                {% if t.fullDay is True %}
+                                    <a href="fullTime/{{t.idTelefono}}/" class="btn btn-secondary" aria-current="page">Horarios def. por el user</a>
+                                    <a href="#" class="btn btn-secondary active" aria-disabled="true">Todo el dia </a>
+                                {% elif t.fullDay is False %}
+                                    <a href="#" class="btn btn-secondary active" aria-disabled="true">Horarios def. por el user</a>
+                                    <a href="fullTime/{{t.idTelefono}}/" class="btn btn-secondary" aria-current="page">Todo el dia </a>
+                                {% endif %}
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+        {% endfor %}
+                    
+    <div class="row">
+        <div class="d-grid gap-2 col-3 mx-auto pt-2">
+            <a style="color:white" href="/vibackend/telefono/"><button class="btn btn-info btn-block" type="">Agregar telefono</button></a>
+        </div>
+        <div class="d-grid gap-2 col-3 mx-auto pt-2">
+            <a style="color:white" href="/vibackend/camara/"><button class="btn btn-info btn-block" type="" >Agregar Cámara</button></a>
+        </div>
+            <div class="d-grid gap-2 col-3 mx-auto pt-2">
+                <a style="color:white" href="/vibackend/horario/"><button class="btn btn-info btn-block" type="" >Modificar Horarios</button></a>
+            </div>
+        </div>
+    </div>
+        
+    <div class="d-flex justify-content-center">
+        
+    <hr/>
+
+    
+
+    {% endblock %}
+
+
+
+
+
+
+
+

@@ -1,0 +1,74 @@
+
+{% extends "./base.html" %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css\styleHome.css' %}" type="text/css">
+    <header>
+      <script src="https://kit.fontawesome.com/894fc46bdd.js" crossorigin="anonymous"></script>
+
+{% endblock %}
+{% block title %} Home {% endblock %}
+
+{% block body %}
+
+<main>
+
+  <section class="py-3 text-center container">
+    <div class="row py-lg-5">
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <h1 class="fw-light">Monitorear</h1>
+        <p class="lead text-muted">Comenzar a monitorear las cámaras y mandar alertas a los teléfonos asociados.</p>
+        <p>
+          <a href="/vibackend/index/arranque/" class="btn btn-primary my-2">Monitorear</a>
+          <a href="#" class="btn btn-secondary my-2">No monitorear</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="container marketing pt-3">
+    <div class="row py-2">
+      <div class="col-lg-4">
+        <i class="fa-solid fa-mobile-screen-button fa-5x" style="color: #1c7ed6;"></i>
+        <h2>Telefonos</h2>
+        <p>Gestionar los telefonos celulares que van a recibir las alertas.</p>
+        <p><a class="btn btn-primary" href="/vibackend/telefono/">Gestionar &raquo;</a></p>
+      </div>
+      <div class="col-lg-4">
+        <i class="fa-duotone fa-camera fa-5x" style="color: #1c7ed6;"></i> 
+
+        <h2>Cámaras</h2>
+        <p>Configurar las cámaras que van a utilizar el sistema para monitorear.</p>
+        <p><a class="btn btn-primary" href="/vibackend/camara/">Gestionar &raquo;</a></p>
+      </div>
+      
+      <div class="col-lg-4">
+        <i class="fa-solid fa-bell fa-5x" style="color: #1c7ed6;"></i>
+
+        <h2>Alertas</h2>
+        <p>Administrar las alertas, en qué horarios y qué telefonos van a recibirlas.</p>
+        <p><a class="btn btn-primary" href="/vibackend/alerta/">Gestionar &raquo;</a></p>
+      </div>
+      <div class="col-lg-4">
+        <i class="fa-solid fa-calendar-days fa-5x" style="color: #1c7ed6;"></i>
+
+        <h2>Horarios</h2>
+        <p>Gestionar los horarios en los que se recibirán las alertas.</p>
+        <p><a class="btn btn-primary" href="/vibackend/horario/">Gestionar &raquo;</a></p>
+      </div>
+      <div class="col-lg-4">
+        <i class="fa-solid fa-file-image fa-5x" style="color: #1c7ed6;"></i>
+
+        <h2>Imágenes</h2>
+        <p>Ver y clasificar imágenes capturadas por el sistema.</p>
+        <p><a class="btn btn-primary" href="/vibackend/pruebaFoto/">Gestionar &raquo;</a></p>
+      </div>
+    </div>
+
+</main>
+
+
+
+{% endblock %}

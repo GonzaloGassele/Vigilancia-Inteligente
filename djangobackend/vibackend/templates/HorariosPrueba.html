@@ -1,0 +1,350 @@
+{% extends "./base.html" %}
+
+{% block title %} Gestión de Horarios {% endblock %}
+
+{% block body %}
+
+
+<div class="container-fluid py-3">
+    <div class="row">
+        
+    <div class="col-sm">
+        <form action="editarHorario/" method="POST">{% csrf_token %}
+        <div class="card card-margin">
+            <div class="card-header no-border">
+                <h5>Lunes</h5>
+                <input type="text" hidden=True id="numDia1" name="numDia1"
+                    class="form-control" value=1> 
+            </div>
+            <div class="card-body pt-3">
+                <div class="widget-49">
+                    <div class="widget-49-title-wrapper">
+                        <div class="widget-49-meeting-info">
+                            <span class="widget-49-pro-title">Horario inicio</span>
+                            <div>
+                                <div class="form-group">
+                                {% for h in horario %}
+                                    {% if h.diaHorario.Dia in 'Lunes' %}
+                                        <input type="time" id="timeHoraIni1" name="timeHoraIni1"
+                                            min="00:00" max="23:59" value={{h.Horainicio}} required>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <hr>
+
+                            <span class="widget-49-pro-title"> Horario fin</span>
+                            <div>
+                                <div class="form-group">
+                                {% for h in horario %}
+                                    {% if h.diaHorario.Dia in 'Lunes'%}
+                                        <input type="time" id="timeHoraFin1" name="timeHoraFin1"
+                                            min="00:00" max="23:59" value={{h.Horafin}} required>
+                                            <input type="text" hidden=True id="idHorario1" name="idHorario1"
+                                                    value={{h.idHorario}} required>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="col-sm">
+        <div class="card card-margin">
+            <div class="card-header no-border">
+                <h5>Martes</h5>
+                <input type="text" hidden=True id="numDia2" name="numDia2"
+                    class="form-control" value=2> 
+            </div>
+            <div class="card-body pt-3">
+                <div class="widget-49">
+                    <div class="widget-49-title-wrapper">
+                        <div class="widget-49-meeting-info">
+                            <span class="widget-49-pro-title">Horario inicio</span>
+                            <div>
+                                <div class="form-group">
+                                {% for h in horario %}
+                                    {% if h.diaHorario.Dia in 'Martes' %}
+                                        <input type="time" id="timeHoraIni2" name="timeHoraIni2"
+                                            min="00:00" max="23:59" value={{h.Horainicio}} required>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <hr>
+
+                            <span class="widget-49-pro-title"> Horario fin</span>
+                            <div>
+                                <div class="form-group">
+                                {% for h in horario %}
+                                    {% if h.diaHorario.Dia in 'Martes' %}
+                                        <input type="time" id="timeHoraFin2" name="timeHoraFin2"
+                                            min="00:00" max="23:59" value={{h.Horafin}} required>
+                                            <input type="text" hidden=True id="idHorario2" name="idHorario2"
+                                                    value={{h.idHorario}} required>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="col-sm">
+        <div class="card card-margin">
+            <div class="card-header no-border">
+                <h5>Miercoles</h5>
+                <input type="text" hidden=True id="numDia3" name="numDia3"
+                    class="form-control" value=3> 
+            </div>
+            <div class="card-body pt-3">
+                <div class="widget-49">
+                    <div class="widget-49-title-wrapper">
+                        <div class="widget-49-meeting-info">
+                            <span class="widget-49-pro-title">Horario inicio</span>
+                            <div>
+                                <div class="form-group">
+                                {% for h in horario %}
+                                    {% if h.diaHorario.Dia in 'Miercoles' %}
+                                        <input type="time" id="timeHoraIni3" name="timeHoraIni3"
+                                            min="00:00" max="23:59" value={{h.Horainicio}} required>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <hr>
+
+                            <span class="widget-49-pro-title"> Horario fin</span>
+                            <div>
+                                <div class="form-group">
+                                {% for h in horario %}
+                                    {% if h.diaHorario.Dia in 'Miercoles' %}
+                                        <input type="time" id="timeHoraFin3" name="timeHoraFin3"
+                                            min="00:00" max="23:59" value={{h.Horafin}} required>
+                                            <input type="text" hidden=True id="idHorario3" name="idHorario3"
+                                                    value={{h.idHorario}} required>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="col-sm">
+        <div class="card card-margin">
+            <div class="card-header no-border">
+                <h5>Jueves</h5>
+                <input type="text" hidden=True id="numDia4" name="numDia4"
+                    class="form-control" value=4> 
+            </div>
+            <div class="card-body pt-3">
+                <div class="widget-49">
+                    <div class="widget-49-title-wrapper">
+                        <div class="widget-49-meeting-info">
+                            <span class="widget-49-pro-title">Horario inicio</span>
+                            <div>
+                                <div class="form-group">
+                                {% for h in horario %}
+                                    {% if h.diaHorario.Dia in 'Jueves' %}
+                                        <input type="time" id="timeHoraIni4" name="timeHoraIni4"
+                                            min="00:00" max="23:59" value={{h.Horainicio}} required>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <hr>
+
+                            <span class="widget-49-pro-title"> Horario fin</span>
+                            <div>
+                                <div class="form-group">
+                                {% for h in horario %}
+                                    {% if h.diaHorario.Dia in 'Jueves' %}
+                                        <input type="time" id="timeHoraFin4" name="timeHoraFin4"
+                                            min="00:00" max="23:59" value={{h.Horafin}} required>
+                                            <input type="text" hidden=True id="idHorario4" name="idHorario4"
+                                                    value={{h.idHorario}} required>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="col-sm">
+        <div class="card card-margin">
+            <div class="card-header no-border">
+                <h5>Viernes</h5>
+                <input type="text" hidden=True id="numDia5" name="numDia5"
+                    class="form-control" value=5> 
+            </div>
+            <div class="card-body pt-3">
+                <div class="widget-49">
+                    <div class="widget-49-title-wrapper">
+                        <div class="widget-49-meeting-info">
+                            <span class="widget-49-pro-title">Horario inicio</span>
+                            <div>
+                                <div class="form-group">
+                                {% for h in horario %}
+                                    {% if h.diaHorario.Dia in 'Viernes' %}
+                                        <input type="time" id="timeHoraIni5" name="timeHoraIni5"
+                                            min="00:00" max="23:59" value={{h.Horainicio}} required>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <hr>
+
+                            <span class="widget-49-pro-title"> Horario fin</span>
+                            <div>
+                                <div class="form-group">
+                                {% for h in horario %}
+                                    {% if h.diaHorario.Dia in 'Viernes' %}
+                                        <input type="time" id="timeHoraFin5" name="timeHoraFin5"
+                                            min="00:00" max="23:59" value={{h.Horafin}} required>
+                                            <input type="text" hidden=True id="idHorario5" name="idHorario5"
+                                                    value={{h.idHorario}} required>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="col-sm">
+        <div class="card card-margin">
+            <div class="card-header no-border">
+                <h5>Sabado</h5>
+                <input type="text" hidden=True id="numDia6" name="numDia6"
+                    class="form-control" value=6> 
+            </div>
+            <div class="card-body pt-3">
+                <div class="widget-49">
+                    <div class="widget-49-title-wrapper">
+                        <div class="widget-49-meeting-info">
+                            <span class="widget-49-pro-title">Horario inicio</span>
+                            <div>
+                                <div class="form-group">
+                                {% for h in horario %}
+                                    {% if h.diaHorario.Dia in 'Sabado' %}
+                                        <input type="time" id="timeHoraIni6" name="timeHoraIni6"
+                                            min="00:00" max="23:59" value={{h.Horainicio}} required>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <hr>
+
+                            <span class="widget-49-pro-title"> Horario fin</span>
+                            <div>
+                                <div class="form-group">
+                                {% for h in horario %}
+                                    {% if h.diaHorario.Dia in 'Sabado' %}
+                                        <input type="time" id="timeHoraFin6" name="timeHoraFin6"
+                                            min="00:00" max="23:59" value={{h.Horafin}} required>
+                                            <input type="text" hidden=True id="idHorario6" name="idHorario6"
+                                                    value={{h.idHorario}} required>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="col-sm">
+        <div class="card card-margin">
+            <div class="card-header no-border">
+                <h5>Domingo</h5>
+                <input type="text" hidden=True id="numDia7" name="numDia7"
+                    class="form-control" value=7> 
+            </div>
+            <div class="card-body pt-3">
+                <div class="widget-49">
+                    <div class="widget-49-title-wrapper">
+                        <div class="widget-49-meeting-info">
+                            <span class="widget-49-pro-title">Horario inicio</span>
+                            <div>
+                                <div class="form-group">
+                                {% for h in horario %}
+                                    {% if h.diaHorario.Dia in 'Domingo' %}
+                                        <input type="time" id="timeHoraIni7" name="timeHoraIni7"
+                                            min="00:00" max="23:59" value={{h.Horainicio}} required>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <hr>
+
+                            <span class="widget-49-pro-title"> Horario fin</span>
+                            <div>
+                                <div class="form-group">
+                                {% for h in horario %}
+                                    {% if h.diaHorario.Dia in 'Domingo' %}
+                                        <input type="time" id="timeHoraFin7" name="timeHoraFin7"
+                                            min="00:00" max="23:59" value={{h.Horafin}} required>
+                                        <input type="text" hidden=True id="idHorario7" name="idHorario7"
+                                                value={{h.idHorario}} required>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="d-grid gap-2 col-6 mx-auto">
+        <button class="btn btn-success btn-block" type="submit" >Guardar Horarios</button>
+    </div>
+
+</form>
+
+    </div>
+</div>
+
+{% endblock %}
