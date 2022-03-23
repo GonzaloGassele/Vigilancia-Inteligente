@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-b198h*_z_kh1(&npcpqimwq2#&2##5e$ssr!q^6cu(n3ooq=x2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -75,7 +75,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
+'''DATABASES = {
          'default': {
              'ENGINE': 'django.db.backends.mysql',
              'OPTIONS': {
@@ -83,7 +83,15 @@ DATABASES = {
                'read_default_file': os.path.join(BASE_DIR, 'my.cnf'),
              }
          }
-     }
+     }'''
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'Universidad.db',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -132,6 +140,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL= "/vibackend/telefono/home/"
+LOGIN_REDIRECT_URL= "/vibackend/index/"
 
 LOGIN_URL = "/vibackend/login/"
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+MEDIA_URL = '/media/'
