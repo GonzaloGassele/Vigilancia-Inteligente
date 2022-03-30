@@ -1,3 +1,4 @@
+import io
 from django.views import View
 from .models import Camara, Camtel, Telefono, Horario, Alerta, Foto, Dia, Camtelhorario
 from django.shortcuts import render, redirect
@@ -14,7 +15,7 @@ import telegram.ext
 import sys
 from pathlib import Path
 from django.core.paginator import Paginator
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 
 
 bot_token = '5265828925:AAHrKJS0mz0AnAciJxOSWQ53aQo69AizEfM'
@@ -35,6 +36,7 @@ def arranque(request):
     k=[]
     for i in camaras:
         if i.estado:
+            print(i)
             options = {'THREADED_QUEUE_MODE': False,'CAP_PROP_FPS': 1}
             k.append([i.nombre,CamGear(source=i.source,**options).start()])
 
@@ -58,6 +60,7 @@ def arranque(request):
                 print("no encuentra frames")
             else:
                 try:
+                    print(i)
                     print("try")
                     img= resize(frames ,(0,0),fx=0.3,fy=0.3)
                     texto= i.nombre
@@ -68,8 +71,13 @@ def arranque(request):
                     if (labels.all()==0):
                         print("ENTRO AL LABELLL")
                         print(texto)
-                        foto=Foto.objects.create(camname=i)
-                        foto.SaveImage(img)
+                        date = datetime.now()
+                        year_month = date.strftime('%Y-%m-%d,%H-%M-%S')
+                        imwrite('media/media/'+year_month+'.png',img)
+                        img_path= Path('media/media/'+year_month+'.png')
+                        img= open(img_path,'rb')
+                        output = io.BytesIO()
+                        Foto.objects.update_or_create(path=output, camname=i.nombre)
                         t=str('La camara detecto una persona en '+ i.nombre)
                         camtel = Camtel.objects.filter(idCamara=i.idCamara).all()
                         for ct in camtel:
@@ -219,8 +227,12 @@ class HorarioView(LoginRequiredMixin, View):
         diaListados = Dia.objects.all()
         horarioListados = Horario.objects.filter(idUsuario=request.user)
         a = horarioListados.count()
+        print(a)
         if a < 7:
+            print(a)
             for i in diaListados:
+                print(a)
+                print(i)
                 Horario.objects.create(diaHorario=i, Horainicio="12:00", Horafin="23:59", idUsuario=request.user)
         return render(request, "HorariosPrueba.html", {'dia': diaListados, 'horario': horarioListados,})
 
@@ -317,6 +329,6 @@ class FotoView(LoginRequiredMixin, View):
         foto.save()
 
 
-        url = reverse_lazy("pruebaFoto") + "?pagina=" + pagina
+        url = reverse('vibackend:pruebaFoto') + "?pagina=" + pagina
         
         return redirect(url)

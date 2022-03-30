@@ -1,5 +1,4 @@
 from django.db import models
-from telegram import User
 from django.contrib.auth.models import User
 from .managers import AlertaManager, CamaraManager
 from datetime import datetime
@@ -37,8 +36,8 @@ class Foto(models.Model):
     idFoto = models.AutoField(primary_key=True)
     path = models.ImageField(max_length=500, null = True, blank=True, upload_to='media/')
     etiqueta = models.BooleanField(null=True, blank=True)
-    camname = models.ForeignKey(Camara, on_delete=models.CASCADE)
-    
+    #camname = models.ForeignKey(Camara, on_delete=models.CASCADE) 
+    camname = models.CharField(max_length=100)
     '''def SaveImage(self, img):
         date = datetime.now()
         year_month = date.strftime('%Y-%m-%d,%H-%M-%S')
