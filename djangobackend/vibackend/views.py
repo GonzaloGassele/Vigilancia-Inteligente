@@ -1,4 +1,3 @@
-import io
 from django.views import View
 from .models import Camara, Camtel, Telefono, Horario, Alerta, Foto, Dia, Camtelhorario
 from django.shortcuts import render, redirect
@@ -15,7 +14,8 @@ import telegram.ext
 import sys
 from pathlib import Path
 from django.core.paginator import Paginator
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
+from django.core.files import File
 
 
 bot_token = '5265828925:AAHrKJS0mz0AnAciJxOSWQ53aQo69AizEfM'
@@ -39,7 +39,6 @@ def arranque(request):
             print(i)
             options = {'THREADED_QUEUE_MODE': False,'CAP_PROP_FPS': 1}
             k.append([i.nombre,CamGear(source=i.source,**options).start()])
-
     while True:
         #print(camaras)
         for i in camaras:
@@ -62,7 +61,9 @@ def arranque(request):
                 try:
                     print(i)
                     print("try")
-                    img= resize(frames ,(0,0),fx=0.3,fy=0.3)
+
+                    #img= resize(frames ,(0,0),fx=0.3,fy=0.3)
+                    img= resize(frames , (576,324))
                     texto= i.nombre
                     result= model(img)
                     result.render() 
@@ -76,8 +77,9 @@ def arranque(request):
                         imwrite('media/media/'+year_month+'.png',img)
                         img_path= Path('media/media/'+year_month+'.png')
                         img= open(img_path,'rb')
-                        output = io.BytesIO()
-                        Foto.objects.update_or_create(path=output, camname=i.nombre)
+                        foto=Foto.objects.create(camname=i)
+                        #imageopen = Image.open(img_path)
+                        foto.path.save(year_month+'.png', File(img))
                         t=str('La camara detecto una persona en '+ i.nombre)
                         camtel = Camtel.objects.filter(idCamara=i.idCamara).all()
                         for ct in camtel:
@@ -87,7 +89,7 @@ def arranque(request):
                                 print(Tel.chatid)
                                 print("AHI VA LA ALERTA")
                                 #Alerta.objects.telegram_msj(Tel.chatid,t,img_path)
-                                #img= open(img_path,'rb')
+                                img= open(img_path,'rb')
                                 bot.sendPhoto(chat_id= Tel.chatid, photo= img,caption= t)
                                 #bot.sendMessage(chat_id=Tel.chatid, text=t)
 
