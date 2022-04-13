@@ -37,6 +37,13 @@ urlpatterns = [
     path('alerta/fullTime/<idTelefono>/', login_required(AlertaView.fullTime)),
     path('alerta/editarAlerta/<idCamtel>', login_required(AlertaView.editarAlerta)),
 
+    # path('pruebaFoto/', login_required(FotoView.pruebaFoto), name = 'pruebaFoto'),
+    # path('pruebaFoto/confirmarFoto/<idFoto>/<confirmacion>/<pagina>', login_required(FotoView.confirmarFoto), name='confirmarFoto')
     path('pruebaFoto/', login_required(FotoView.pruebaFoto), name = 'pruebaFoto'),
-    path('pruebaFoto/confirmarFoto/<idFoto>/<confirmacion>/<pagina>', login_required(FotoView.confirmarFoto), name='confirmarFoto')
+    path('pruebaFoto/confirmarFoto/<idFoto>/<confirmacion>/<pagina>', login_required(FotoView.confirmarFoto), name='confirmarFoto'),
+    path('fotosTagueadas/', login_required(FotoView.fotosTagueadas), name= 'fotosTagueadas'),
+    path('fotosTagueadas/confirmarFoto/<idFoto>/<confirmacion>/<pagina>', login_required(FotoView.confirmarFotosTagueadas), name= 'confirmarFotosTagueadas'),
+    path('fotosFecha/', login_required(FotoView.fotosFecha), name = 'fotosFecha'),
+    path('fotosFechaFiltradas/', login_required(FotoView.fotosFechaFiltradas), name='fotosFechaFiltradas'),
+    path('fotosFechaFiltradas/confirmarFoto/<idFoto>/<confirmacion>/', login_required(FotoView.confirmarFotosFechaFiltradas), name = 'confirmarFotosFechaFiltradas')
 ]

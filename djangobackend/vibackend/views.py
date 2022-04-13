@@ -18,7 +18,7 @@ import telegram.ext
 import sys
 from pathlib import Path
 from django.core.paginator import Paginator
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.core.files import File
 import time
 
@@ -26,7 +26,6 @@ import time
 bot_token = '5265828925:AAHrKJS0mz0AnAciJxOSWQ53aQo69AizEfM'
 bot= telegram.ext.ExtBot(token= bot_token)
 stop_thread=''
-
 
 def arranque(camaras, horariolistado):
     model= load('ultralytics/yolov5', 'yolov5s6')# modelo
@@ -361,7 +360,7 @@ class FotoView(LoginRequiredMixin, View):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
 
-    def pruebaFoto(request):
+    '''def pruebaFoto(request):
         foto1 = Foto.objects.all()
 
         foto_paginator = Paginator(foto1, 5)
@@ -379,4 +378,67 @@ class FotoView(LoginRequiredMixin, View):
 
         url = reverse('vibackend:pruebaFoto') + "?pagina=" + pagina
         
+        return redirect(url)'''
+
+
+    def pruebaFoto(request):
+        foto1 = Foto.objects.filter(etiqueta__isnull=True)
+
+        foto_paginator = Paginator(foto1, 5)
+
+        numero_pagina = request.GET.get('pagina')
+        pagina = foto_paginator.get_page(numero_pagina)
+
+        return render(request, "fotos.html", {"foto" : foto1, 'pagina': pagina})
+
+    def confirmarFoto(request, idFoto, confirmacion, pagina):
+        foto = Foto.objects.get(idFoto = idFoto)
+        foto.etiqueta = confirmacion
+        foto.save()
+
+        url = reverse_lazy('vibackend:pruebaFoto') + "?pagina=" + pagina
+        
         return redirect(url)
+
+
+    def fotosTagueadas(request):
+        foto = Foto.objects.filter(etiqueta__isnull=False)
+
+        foto_paginator = Paginator(foto, 5)
+        numero_pagina = request.GET.get('pagina')
+        pagina = foto_paginator.get_page(numero_pagina)
+
+        return render(request, "fotosEtiquetadas.html", {"foto": foto, 'pagina':pagina})
+
+    def confirmarFotosTagueadas(request, idFoto, confirmacion, pagina):
+        foto = Foto.objects.get(idFoto = idFoto)
+        foto.etiqueta = confirmacion
+        foto.save()
+
+        url = reverse_lazy('vibackend:fotosTagueadas') + "?pagina=" + pagina
+
+        return redirect(url)
+
+
+    def fotosFecha(request):
+        return render(request, "fotosFecha.html")
+
+
+    def fotosFechaFiltradas(request):
+        fechaInicio = request.POST['fechaInicio']
+        fechaFin =  request.POST['fechaFin']
+        foto = Foto.objects.filter(fecha__range=[fechaInicio, fechaFin])
+        
+        return render(request, "fotosFechaFiltradas.html", {'foto':foto})
+
+    def confirmarFotosFechaFiltradas(request, idFoto, confirmacion, pfinicio, pffin):
+        foto = Foto.objects.get(idFoto = idFoto)
+        foto.etiqueta = confirmacion
+        foto.save()
+
+        foto = Foto.objects.filter(fecha__range=[pfinicio, pffin])
+        return     
+    
+    
+    
+    
