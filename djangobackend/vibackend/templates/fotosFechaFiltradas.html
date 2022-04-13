@@ -1,0 +1,122 @@
+{% extends "./base.html" %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styleFotos.css' %}" type="text/css">
+{% endblock %}
+
+{% block title %} Fotos {% endblock %}
+
+{% block body %}
+
+<body style="background: #dbe7ff;">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">Vigilancia Inteligente</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Telefonos <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Cámaras <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Alertas <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"  href="#">Horarios <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Fotos <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-i'^media/(?P<path>.*)$',tem">
+                    <a class="nav-link" href="#">Ayuda <span class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    
+    <h1 class="display-5 text-center" style="color: 1f1f1f; text-shadow: 1px 1px 1px #000000;" >Fotos</h1>
+
+    <div class="container fluid py-2">
+        <ul class="nav nav-pills nav-fill">
+            <li class="nav-item">
+            <a class="nav-link"  href="/vibackend/pruebaFoto/">Fotos sin etiquetar</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/vibackend/fotosTagueadas/">Fotos etiquetadas</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/vibackend/fotosFecha/">Buscar por fecha</a>
+            </li>
+        </ul>
+    </div>
+
+<hr>
+<div class="container-fluid py-2">
+
+
+{% for f in foto %}
+    <div class="row py-3">
+        <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+            <img src="{{f.path.url}}" class="img-fluid" style="max-width: 75%;" alt="...">
+        </div>
+
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+            <div class="card card-margin" style="border-radius: 1rem;">
+                <div class="card-header no-border" style="border-radius: 1rem 1rem 0rem 0rem;padding-top:  0.8rem;">
+                    <h5 class="card-title"> "foto {{f.idFoto}}" de la camara "{{f.camname.nombre}}"</h5>
+                </div>
+                
+
+                <div class="card-body pt-3">
+                    <h5 class="card-title"> ¿Hay una persona en la foto?</h5>
+
+                    {% if f.etiqueta == False %}
+                        <span class="badge bg-secondary" style="color: white;">No hay persona</span>
+                    {% elif f.etiqueta == True %}
+                        <span class="badge bg-success" style="color:white">Hay persona</span>
+                    {% else %}
+                        <span class="badge bg-dark" style="color:white">Sin etiquetar</span>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col">
+                            <a href="confirmarFoto/{{f.idFoto}}/{{'True'}}/{{pagina.number}}" class="btn btn-info btn-block"> Hay una persona</a>
+                        </div>
+                    </div>
+            
+                    <div class="row py-2">
+                        <div class="col">
+                            <a href="confirmarFoto/{{f.idFoto}}/{{'False'}}/{{pagina.number}}" class="btn btn-info btn-block"> No hay una persona</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <hr>
+
+{% endfor %}
+
+
+
+
+
+
+
+
+
+</div>
+
+</div>
+    
+</body>
+{% endblock %}

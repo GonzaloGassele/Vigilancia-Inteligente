@@ -10,15 +10,16 @@
 {% block body %}
 
 <body style="background: #dbe7ff;">
+
     <h1 class="display-5 text-center" style="color: 1f1f1f; text-shadow: 1px 1px 1px #000000;" >Fotos</h1>
     
     <div class="container fluid py-2">
         <ul class="nav nav-pills nav-fill">
             <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="">Fotos sin etiquetar</a>
+            <a class="nav-link"  href="/vibackend/pruebaFoto/">Fotos sin etiquetar</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/vibackend/fotosTagueadas/">Fotos etiquetadas</a>
+                <a class="nav-link active" aria-current="page" href="#">Fotos etiquetadas</a>
             </li>
             <li class="nav-item">
             <a class="nav-link"  href="/vibackend/fotosFecha/">Buscar por fecha</a>
@@ -76,6 +77,14 @@
             
                 <div class="card-body pt-3">
                     <h5 class="card-title"> ¿Hay una persona en la foto?</h5>
+
+                    {% if f.etiqueta == False %}
+                        <span class="badge bg-secondary" style="color: white;">No hay persona</span>
+                    {% elif f.etiqueta == True %}
+                        <span class="badge bg-success" style="color:white">Hay persona</span>
+                    {% else %}
+                        <span class="badge bg-dark" style="color:white">Sin etiquetar</span>
+                    {% endif %}
 
                     <div class="row">
                         <div class="col">

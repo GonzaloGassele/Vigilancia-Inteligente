@@ -1,14 +1,15 @@
 {% extends "./base.html" %}
 
-{% block head %}
-    {% load static %}
-{% endblock %}
 
 {% block title %} Gestión de Horarios {% endblock %}
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css\stylesHorario.css' %}" type="text/css">
+{% endblock %}
 
 {% block body %}
 
-
+<body style="background: #dbe7ff;">
 <div class="container-fluid py-3">
     <div id="alerta" class="alert alert-warning alert-dismissible fade show" role="alert" style="display: none;">
       Horario invalido, hora fin no puede ser menor a la hora de inicio.
@@ -356,6 +357,6 @@
 
     </div>
 </div>
-
+</body>
 <script src="{% static 'js\horario.js' %}"></script>
 {% endblock %}
