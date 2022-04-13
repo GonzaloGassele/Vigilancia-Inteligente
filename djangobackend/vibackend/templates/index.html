@@ -19,10 +19,23 @@
       <div class="col-lg-6 col-md-8 mx-auto">
         <h1 class="fw-light">Monitorear</h1>
         <p class="lead text-muted">Comenzar a monitorear las cámaras y mandar alertas a los teléfonos asociados.</p>
+        {% if prendido is True %}
         <p>
-          <a href="/vibackend/index/arranque/" class="btn btn-primary my-2">Monitorear</a>
-          <a href="#" class="btn btn-secondary my-2">No monitorear</a>
+          <a href="#" class="btn btn-primary my-2 disabled" role="button" aria-disabled="true">Monitorear</a>
+          <a href="/vibackend/index/apagar/" class="btn btn-secondary my-2">No monitorear</a>
         </p>
+        <p class="badge badge-success" style="font-size: 2rem; align-content: center;">
+          El sistema esta activo
+        </p>
+        {% elif prendido is False %}
+        <p>
+          <a href="/vibackend/index/prender/" class="btn btn-primary my-2">Monitorear</a>
+          <a href="#" class="btn btn-secondary my-2 disabled" role="button" aria-disabled="true">No monitorear</a>
+        </p>
+        <p class="badge badge-danger" style="font-size: 2rem; align-content: center;">
+          El sistema no esta activo
+        </p>
+        {% endif %}
       </div>
     </div>
   </section>
@@ -37,7 +50,7 @@
         <p><a class="btn btn-primary" href="/vibackend/telefono/">Gestionar &raquo;</a></p>
       </div>
       <div class="col-lg-4">
-        <i class="fa-duotone fa-camera fa-5x" style="color: #1c7ed6;"></i> 
+        <i class="fa-solid fa-camera fa-5x" style="color: #1c7ed6;"></i> 
 
         <h2>Cámaras</h2>
         <p>Configurar las cámaras que van a utilizar el sistema para monitorear.</p>

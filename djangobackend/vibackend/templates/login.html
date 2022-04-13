@@ -21,11 +21,15 @@
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-        <div class="card shadow-2-strong" style="border-radius: 1rem;">
+        <div class="card shadow-2-strong" style="border-radius: 2rem; border: 3rem 3rem 3rem 3rem; border-color: black;">
+          <div class="card-header text-center text-black" style="border-radius: 2rem 2rem 0rem 0rem;background-color: #2971f8; border-color: black;">
+            <div class="row align-items-center">
+                   <div class="col-md-12">
+                          <h3>Login</h3>
+                   </div>
+            </div>
+       </div>
           <div class="card-body p-5 text-center">
-
-            <h3 class="mb-5">Login</h3>
-
   <form action="/vibackend/autenticar/" method="POST">{% csrf_token %}
 
             <div class="form-outline mb-4">

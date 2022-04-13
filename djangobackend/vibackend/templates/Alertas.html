@@ -8,7 +8,7 @@
     <div class="row py-2 ">
                     <div class="col-sm px-2">
                     <div class="card">
-                        <div class="card-header no-border">
+                        <div class="card-header no-border" style="justify-content: center; padding-top: 1rem;">
                             <h5 class="card-title">Telefono</h5>
                         </div>
                         <div class="card-body">
@@ -22,42 +22,45 @@
 
         <div class="col-sm px-2">
             <div class="card">
-                <div class="card-header no-border">
+                <div class="card-header no-border" style="justify-content: center; padding-top: 1rem;">
                     <h5 class="card-title">Camaras</h5>
                 </div>
                 <div class="card-body ">
+                    <table>
                     {% for c in camtel %}
+                    <tr>
                         {% if c.idTelefono.idTelefono is t.idTelefono and c.activo is False%}
-                            <div class="btn-group">
-                                <div class="row">
-                                    <div style="padding: 0px 20px; margin: 5px;">
-                                        <span >
+                                        <td style="width: 3em;">
                                             {{c.idCamara.nombre}}
-                                        </span>
-                                    </div>
+                                        </td>
                                     <div style="display:flex;">
-                                        <a href="#" class="btn btn-primary active" aria-current="page" aria-disabled="true" style="margin: 5px;">No Monitorear</a>
+                                        <td>
+                                        <a href="#" class="btn btn-primary active" aria-current="page" aria-disabled="true" style="margin: 5px; font-size: 1rem;">No Monitorear</a>
+                                        
+                                        </td>
+                                        <td>
                                         <a href="editarAlerta/{{c.idCamtel}}" class="btn btn-primary" style="margin: 5px;">Monitorear</a>
+                                        </td>
+
                                     </div>
 
-                                </div>
-                            </div>
                         {% elif c.idTelefono.idTelefono is t.idTelefono and c.activo is True %}
-                            <div class="btn-group">
-                                <div class="row">
-                                    <div style="padding-right: 20px; margin: 5px;">
-                                        <span>
+                                        
+                                        <td style="width: 3em;">
                                             {{c.idCamara.nombre}}
-                                        </span>
-                                    </div>
+                                        </td>
                                 <div style="display:flex;">
-                                    <a href="editarAlerta/{{c.idCamtel}}" class="btn btn-primary" aria-current="page" style="margin: 5px;">No Monitorear</a>
+                                    <td>
+                                    <a href="editarAlerta/{{c.idCamtel}}" class="btn btn-primary" aria-current="page" style="margin: 5px; font-size: 1rem;">No Monitorear</a>
+                                    </td>
+                                    <td>
                                     <a href="#" class="btn btn-primary active" aria-disabled="true" style="margin: 5px;">Monitorear</a>
+                                    </td>
                                 </div>
-                                </div>
-                            </div>
                         {% endif %}
+                    </tr>
                     {% endfor %}
+                </table>
 
                 </div>
 
@@ -70,7 +73,7 @@
         <div class="col-sm px-2">
             
             <div class="card">
-                <div class="card-header no-border">
+                <div class="card-header no-border" style="justify-content: center; padding-top: 1rem;">
                     <h5 class="card-title">Horarios</h5>
                 </div>
                 <div class="card-body">
@@ -88,6 +91,7 @@
             </div>
         </div>
     </div>
+    <hr>
         {% endfor %}
                     
     <div class="row">

@@ -7,7 +7,8 @@ from . import views
 app_name = 'vibackend'
 urlpatterns = [
     path('index/', login_required(views.index)),
-    path('index/arranque/', login_required(views.arranque)),
+    path('index/prender/', login_required(views.prenderSistema)),
+    path('index/apagar/', login_required(views.apagarSistema)),
 
     path('login/', views.loguear),
     path('autenticar/', views.autenticar),

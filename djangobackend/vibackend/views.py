@@ -1,12 +1,16 @@
+import threading
+from re import L
+from urllib.request import Request
 from django.views import View
-from .models import Camara, Camtel, Telefono, Horario, Alerta, Foto, Dia, Camtelhorario
+from torch import NoopLogger
+from .models import Camara, Camtel, Telefono, Horario, Alerta, Foto, Dia, Camtelhorario, thread_with_trace
 from django.shortcuts import render, redirect
 from vidgear.gears import CamGear
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from datetime import datetime
+from datetime import datetime, date
 from cv2 import resize, imwrite
 from torch.hub import load
 import telegram
@@ -16,41 +20,34 @@ from pathlib import Path
 from django.core.paginator import Paginator
 from django.urls import reverse
 from django.core.files import File
+import time
 
 
 bot_token = '5265828925:AAHrKJS0mz0AnAciJxOSWQ53aQo69AizEfM'
-#api_url= f"https://api.telegram.org/bot{bot_token}/"
 bot= telegram.ext.ExtBot(token= bot_token)
-
-def index(request):
-        
-    return render(request, "index.html")
+stop_thread=''
 
 
-def arranque(request):
+def arranque(camaras, horariolistado):
     model= load('ultralytics/yolov5', 'yolov5s6')# modelo
     #configuración del modelo
-    model.conf = 0.1#confidence threshold (0-1)
+    model.conf = 0.7#confidence threshold (0-1)
     model.classes= [0]# detección de personas
-    camaras = Camara.objects.filter(estado=True).filter(usercam=request.user).all()
     k=[]
     for i in camaras:
         if i.estado:
             print(i)
             options = {'THREADED_QUEUE_MODE': False,'CAP_PROP_FPS': 1}
-            k.append([i.nombre,CamGear(source=i.source,**options).start()])
-    while True:
-        #print(camaras)
+            k.append([i.nombre,CamGear(source=i.source,**options).start(),datetime.now(),True])
+    while stop_thread is False:
         for i in camaras:
             frames=None
-            #frame=Camara.objects.get(idCamara=i.idCamara).leerCamara()
             
             if i.estado:
                 for j in k:
                     if i.nombre==j[0]:
-                        print(j[0])
-                        print(i.nombre)
-                        print("entro")
+                        #print(j[0])
+                        #print(i.nombre)
                         frames=j[1].read()
                 print(f"la camara {i.nombre} esta leyendo los datos")
             else:
@@ -59,10 +56,6 @@ def arranque(request):
                 print("no encuentra frames")
             else:
                 try:
-                    print(i)
-                    print("try")
-
-                    #img= resize(frames ,(0,0),fx=0.3,fy=0.3)
                     img= resize(frames , (576,324))
                     texto= i.nombre
                     result= model(img)
@@ -78,25 +71,78 @@ def arranque(request):
                         img_path= Path('media/media/'+year_month+'.png')
                         img= open(img_path,'rb')
                         foto=Foto.objects.create(camname=i)
-                        #imageopen = Image.open(img_path)
                         foto.path.save(year_month+'.png', File(img))
                         t=str('La camara detecto una persona en '+ i.nombre)
                         camtel = Camtel.objects.filter(idCamara=i.idCamara).all()
-                        for ct in camtel:
-                            if ct.activo:
-                                Tel = Telefono.objects.get(idTelefono=ct.idTelefono.idTelefono)
-                                print(Tel)
-                                print(Tel.chatid)
-                                print("AHI VA LA ALERTA")
-                                #Alerta.objects.telegram_msj(Tel.chatid,t,img_path)
-                                img= open(img_path,'rb')
-                                bot.sendPhoto(chat_id= Tel.chatid, photo= img,caption= t)
-                                #bot.sendMessage(chat_id=Tel.chatid, text=t)
+                        for j in k:
+                            if i.nombre==j[0]:
+                                tiempo=datetime.now()-j[2]
+                                tiempoSegundo=tiempo.total_seconds()
+                                print(tiempoSegundo)
+                                if j[3] or tiempoSegundo>300:
+                                    j[3]=False
+                                    j[2]=datetime.now()
+                                    flag=True
+                                else:
+                                    flag=False
+                        if flag:
+                            for ct in camtel:
+                                if ct.activo:
+                                    Tel = Telefono.objects.get(idTelefono=ct.idTelefono.idTelefono)
+                                    if Tel.fullDay:
+                                        print("Esta activo todo el dia")
+                                        img= open(img_path,'rb')
+                                        mensaje=bot.sendPhoto(chat_id=Tel.chatid, photo=img, caption=t)
+                                    else:
+                                        today = date.today()
+                                        for h in horariolistado:
+                                            if h.diaHorario.idDia==today.isoweekday():
+                                                Horaactual = str(datetime.now())[11:16]
+                                                if (Horaactual>=h.Horainicio and Horaactual<=h.Horafin):
+                                                    print("Esta dentro del rango de horario")
+                                                    img= open(img_path,'rb')
+                                                    mensaje=bot.sendPhoto(chat_id= Tel.chatid, photo= img,caption= t)
+                                                else:
+                                                    print("no esta dentro del rango de horario")
+    
 
                 except:
                     print("ocurrio un error: ")
                     e = sys.exc_info()[1]
                     print(e.args[0])
+    for i in k:
+        i[1].stop()
+
+            
+
+t1 = thread_with_trace(target = arranque)
+
+def index(request):
+    if t1.is_alive():
+        prendido=True
+    elif t1.is_alive() is False:
+        prendido=False
+    return render(request, "index.html",{"prendido":prendido})
+
+
+def prenderSistema(request):
+    global t1, stop_thread
+    stop_thread=False
+    horariolistado= Horario.objects.filter(idUsuario=request.user).all()
+    camaras = Camara.objects.filter(estado=True).filter(usercam=request.user).all()
+    t1 = thread_with_trace(target = arranque, args=(camaras, horariolistado))
+    t1.start()
+    print(t1.is_alive())
+    time.sleep(1)
+    return redirect('/vibackend/index/')
+
+
+
+def apagarSistema(request):
+    global stop_thread
+    stop_thread=True
+    time.sleep(3)
+    return redirect('/vibackend/index/')
 
 
 
@@ -196,8 +242,9 @@ class TelefonoView(LoginRequiredMixin, View):
     def registrarTelefono(request):
         nombre = request.POST['txtNombre']
         numero = request.POST['txtNumero']
-        telefono = Telefono.objects.create(
-            nombre = nombre, numero = numero, usertel=request.user
+        chatid = request.POST['txtChat']
+        Telefono.objects.create(
+            nombre = nombre, numero = numero, chatid = chatid, usertel=request.user
         )
         return redirect('/vibackend/telefono/')
 
@@ -213,10 +260,12 @@ class TelefonoView(LoginRequiredMixin, View):
     def editarTelefono(request):
         nombre = request.POST['txtNombre']
         numero = request.POST['txtNumero']
+        chatid = request.POST['txtChat']
         idTelefono = request.POST['idTelefono']
         telefono = Telefono.objects.filter(usertel=request.user).get(idTelefono = idTelefono)
         telefono.nombre = nombre
         telefono.numero = numero
+        telefono.chatid = chatid
         telefono.save()
 
         return redirect('/vibackend/telefono/')
@@ -231,10 +280,7 @@ class HorarioView(LoginRequiredMixin, View):
         a = horarioListados.count()
         print(a)
         if a < 7:
-            print(a)
             for i in diaListados:
-                print(a)
-                print(i)
                 Horario.objects.create(diaHorario=i, Horainicio="12:00", Horafin="23:59", idUsuario=request.user)
         return render(request, "HorariosPrueba.html", {'dia': diaListados, 'horario': horarioListados,})
 
@@ -277,14 +323,14 @@ class AlertaView(LoginRequiredMixin, View):
                     Camtelhorario.objects.get(idCamtel=ct, idHorario=h)
                 except Camtelhorario.DoesNotExist:
                     Camtelhorario.objects.create(idCamtel=ct, idHorario=h)
-        cmhListado = Camtelhorario.objects.filter(idCamtel__idUsuario=request.user).all()
+        '''cmhListado = Camtelhorario.objects.filter(idCamtel__idUsuario=request.user).all()
         for ch in cmhListado:
             try:
                 Alerta.objects.get(idCamtelHorario=ch)
             except Alerta.DoesNotExist:
                 Alerta.objects.create(idCamtelHorario=ch)
-        alertaListados = Alerta.objects.filter(idCamtelHorario__idCamtel__idUsuario=request.user).all()
-        return render(request, "Alertas.html", {'alerta': alertaListados, 'cthorario': cmhListado, 'camtel': camtelListados, 'telefono': telefonoListados, 'camara': camaraListados,'horario': horarioListados,})
+        alertaListados = Alerta.objects.filter(idCamtelHorario__idCamtel__idUsuario=request.user).all()'''
+        return render(request, "Alertas.html", {'camtel': camtelListados, 'telefono': telefonoListados,})
 
     def fullTime(request,idTelefono):
         telefono = Telefono.objects.get(idTelefono=idTelefono)

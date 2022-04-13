@@ -1,9 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from .managers import AlertaManager, CamaraManager
-from datetime import datetime
-from cv2 import imwrite
-from pathlib import Path
+import sys
+import threading
+import ctypes
 
 class Dia(models.Model):
     idDia= models.AutoField(primary_key=True)
@@ -34,16 +34,11 @@ class Camara(models.Model):
 
 class Foto(models.Model):
     idFoto = models.AutoField(primary_key=True)
-    path = models.ImageField(max_length=500, null = True, blank=True, upload_to='media/')
+    path = models.ImageField(max_length=500, null = True, blank=True, upload_to='media/', default='')
     etiqueta = models.BooleanField(null=True, blank=True)
-    #camname = models.ForeignKey(Camara, on_delete=models.CASCADE) 
-    camname = models.CharField(max_length=100)
-    '''def SaveImage(self, img):
-        date = datetime.now()
-        year_month = date.strftime('%Y-%m-%d,%H-%M-%S')
-        imwrite('media/'+year_month+'.jpg',img)
-        self.path= Path('media/'+year_month+'.jpg')
-        return self.path'''
+    camname = models.ForeignKey(Camara, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+    fechaEtiqueta = models.DateTimeField(null=True, blank=True)
     
     def __str__(self):
         return '%s, %s, %s' % (self.idFoto, self.etiqueta, self.camname)
@@ -81,8 +76,44 @@ class Camtelhorario(models.Model):
 class Alerta(models.Model):
     idAlerta = models.AutoField(primary_key=True)
     idFoto = models.ForeignKey(Foto, on_delete=models.CASCADE, null=True, blank=True)
-    idCamtelHorario = models.ForeignKey(Camtelhorario, on_delete=models.CASCADE)
+    idTelefono = models.ForeignKey(Telefono, on_delete=models.CASCADE)
+    idMensaje = models.IntegerField(null=True, blank=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+    etiqueta = models.BooleanField(null=True, blank=True)
+    fechaEtiqueta = models.DateTimeField(null=True, blank=True)
     objects = AlertaManager()
 
     def __str__(self):
         return '%s, %s, %s' % (self.idAlerta, self.idCamtelHorario, self.idFoto)
+
+
+
+class thread_with_trace(threading.Thread):
+  def __init__(self, *args, **keywords):
+    threading.Thread.__init__(self, *args, **keywords)
+    self.killed = False
+ 
+  def start(self):
+    self.__run_backup = self.run
+    self.run = self.__run     
+    threading.Thread.start(self)
+ 
+  def __run(self):
+    sys.settrace(self.globaltrace)
+    self.__run_backup()
+    self.run = self.__run_backup
+ 
+  def globaltrace(self, frame, event, arg):
+    if event == 'call':
+      return self.localtrace
+    else:
+      return None
+ 
+  def localtrace(self, frame, event, arg):
+    if self.killed:
+      if event == 'line':
+        raise SystemExit()
+    return self.localtrace
+ 
+  def kill(self):
+    self.killed = True
