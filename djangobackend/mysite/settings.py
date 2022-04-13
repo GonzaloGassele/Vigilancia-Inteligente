@@ -122,14 +122,21 @@ TIME_ZONE = 'America/Buenos_Aires'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
-USE_L10N = True
+USE_L10N = False
 
 TIME_INPUT_FORMATS = [
     '%H:%M',        # '14:30'
 ]
 
+DATE_INPUT_FORMATS = [
+    '%d/%m/%Y',
+]
+
+DATETIME_INPUT_FORMATS = [
+    '%d/%m/%Y %H:%M:%S',
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
