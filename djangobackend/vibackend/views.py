@@ -30,7 +30,7 @@ stop_thread=''
 def arranque(camaras, horariolistado):
     model= load('ultralytics/yolov5', 'yolov5s6')# modelo
     #configuración del modelo
-    model.conf = 0.7#confidence threshold (0-1)
+    model.conf = 0.3#confidence threshold (0-1)
     model.classes= [0]# detección de personas
     k=[]
     for i in camaras:
@@ -66,11 +66,11 @@ def arranque(camaras, horariolistado):
                         print(texto)
                         date = datetime.now()
                         year_month = date.strftime('%Y-%m-%d,%H-%M-%S')
-                        imwrite('media/media/'+year_month+'.png',img)
-                        img_path= Path('media/media/'+year_month+'.png')
+                        imwrite('media/media/'+year_month+'.jpg',img)
+                        img_path= Path('media/media/'+year_month+'.jpg')
                         img= open(img_path,'rb')
                         foto=Foto.objects.create(camname=i)
-                        foto.path.save(year_month+'.png', File(img))
+                        foto.path.save(year_month+'.jpg', File(img))
                         t=str('La camara detecto una persona en '+ i.nombre)
                         camtel = Camtel.objects.filter(idCamara=i.idCamara).all()
                         for j in k:
