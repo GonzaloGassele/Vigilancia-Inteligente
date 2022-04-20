@@ -27,16 +27,16 @@ bot= telegram.ext.ExtBot(token= bot_token)
 stop_thread=''
 
 def arranque(camaras, horariolistado):
-    model= load('ultralytics/yolov5', 'yolov5s6')# modelo
+    model= load('ultralytics/yolov5', 'yolov5l6')# modelo
     #configuración del modelo
-    model.conf = 0.3#confidence threshold (0-1)
+    model.conf = 0.7#confidence threshold (0-1)
     model.classes= [0]# detección de personas
     k=[]
     for i in camaras:
         if i.estado:
             print(i)
             options = {'THREADED_QUEUE_MODE': False,'CAP_PROP_FPS': 1}
-            k.append([i.nombre,CamGear(source=i.source,**options).start(),datetime.now(),True])
+            k.append([i.nombre,CamGear(source=i.source,**options).start(),datetime.now(),True,datetime.now(),True])
     while stop_thread is False:
         for i in camaras:
             frames=None
@@ -61,47 +61,59 @@ def arranque(camaras, horariolistado):
                     labels = result.xyxyn[0][:, -1].cpu().numpy()
 
                     if (labels.all()==0):
-                        print("ENTRO AL LABELLL")
-                        print(texto)
-                        date = datetime.now()
-                        year_month = date.strftime('%Y-%m-%d,%H-%M-%S')
-                        imwrite('media/media/'+year_month+'.jpg',img)
-                        img_path= Path('media/media/'+year_month+'.jpg')
-                        img= open(img_path,'rb')
-                        foto=Foto.objects.create(camname=i)
-                        foto.path.save(year_month+'.jpg', File(img))
-                        t=str('La camara detecto una persona en '+ i.nombre)
-                        camtel = Camtel.objects.filter(idCamara=i.idCamara).all()
-                        for j in k:
-                            if i.nombre==j[0]:
-                                tiempo=datetime.now()-j[2]
-                                tiempoSegundo=tiempo.total_seconds()
-                                print(tiempoSegundo)
-                                if j[3] or tiempoSegundo>300:
-                                    j[3]=False
-                                    j[2]=datetime.now()
-                                    flag=True
+                        #print("ENTRO AL LABELLL")
+                        #print(texto)   
+                        for v in k:
+                            if i.nombre==v[0]:
+                                tiempo2=datetime.now()-v[4]
+                                tiempoSegundo2=tiempo2.total_seconds()
+                                #print(tiempoSegundo)
+                                if v[5] or tiempoSegundo2>10:
+                                    v[5]=False
+                                    v[4]=datetime.now()
+                                    flagfoto=True
                                 else:
-                                    flag=False
-                        if flag:
-                            for ct in camtel:
-                                if ct.activo:
-                                    Tel = Telefono.objects.get(idTelefono=ct.idTelefono.idTelefono)
-                                    if Tel.fullDay:
-                                        print("Esta activo todo el dia")
-                                        img= open(img_path,'rb')
-                                        mensaje=bot.sendPhoto(chat_id=Tel.chatid, photo=img, caption=t)
+                                    flagfoto=False
+                        if flagfoto:
+                            date = datetime.now()
+                            year_month = date.strftime('%Y-%m-%d,%H-%M-%S')
+                            imwrite('media/media/'+year_month+'.jpg',img)
+                            img_path= Path('media/media/'+year_month+'.jpg')
+                            img= open(img_path,'rb')
+                            foto=Foto.objects.create(camname=i)
+                            foto.path.save(year_month+'.jpg', File(img))
+                            t=str('La camara detecto una persona en '+ i.nombre)
+                            camtel = Camtel.objects.filter(idCamara=i.idCamara).all()
+                            for j in k:
+                                if i.nombre==j[0]:
+                                    tiempo=datetime.now()-j[2]
+                                    tiempoSegundo=tiempo.total_seconds()
+                                    #print(tiempoSegundo)
+                                    if j[3] or tiempoSegundo>300:
+                                        j[3]=False
+                                        j[2]=datetime.now()
+                                        flag=True
                                     else:
-                                        today = date.today()
-                                        for h in horariolistado:
-                                            if h.diaHorario.idDia==today.isoweekday():
-                                                Horaactual = str(datetime.now())[11:16]
-                                                if (Horaactual>=h.Horainicio and Horaactual<=h.Horafin):
-                                                    print("Esta dentro del rango de horario")
-                                                    img= open(img_path,'rb')
-                                                    mensaje=bot.sendPhoto(chat_id= Tel.chatid, photo= img,caption= t)
-                                                else:
-                                                    print("no esta dentro del rango de horario")
+                                        flag=False
+                            if flag:
+                                for ct in camtel:
+                                    if ct.activo:
+                                        Tel = Telefono.objects.get(idTelefono=ct.idTelefono.idTelefono)
+                                        if Tel.fullDay:
+                                            #print("Esta activo todo el dia")
+                                            img= open(img_path,'rb')
+                                            mensaje=bot.sendPhoto(chat_id=Tel.chatid, photo=img, caption=t)
+                                        else:
+                                            today = date.today()
+                                            for h in horariolistado:
+                                                if h.diaHorario.idDia==today.isoweekday():
+                                                    Horaactual = str(datetime.now())[11:16]
+                                                    if (Horaactual>=h.Horainicio and Horaactual<=h.Horafin):
+                                                        #print("Esta dentro del rango de horario")
+                                                        img= open(img_path,'rb')
+                                                        mensaje=bot.sendPhoto(chat_id= Tel.chatid, photo= img,caption= t)
+                                                    else:
+                                                        print("no esta dentro del rango de horario")
     
 
                 except:
@@ -276,13 +288,13 @@ class HorarioView(LoginRequiredMixin, View):
         diaListados = Dia.objects.all()
         b = diaListados.count()
         if b < 7:
-            diaListados.objects.create(idDia=1,Dia="Lunes")
-            diaListados.objects.create(idDia=2,Dia="Martes")
-            diaListados.objects.create(idDia=3,Dia="Miercoles")
-            diaListados.objects.create(idDia=4,Dia="Jueves")
-            diaListados.objects.create(idDia=5,Dia="Viernes")
-            diaListados.objects.create(idDia=6,Dia="Sabado")
-            diaListados.objects.create(idDia=7,Dia="Domingo")
+            Dia.objects.create(idDia=1,Dia="Lunes")
+            Dia.objects.create(idDia=2,Dia="Martes")
+            Dia.objects.create(idDia=3,Dia="Miercoles")
+            Dia.objects.create(idDia=4,Dia="Jueves")
+            Dia.objects.create(idDia=5,Dia="Viernes")
+            Dia.objects.create(idDia=6,Dia="Sabado")
+            Dia.objects.create(idDia=7,Dia="Domingo")
         horarioListados = Horario.objects.filter(idUsuario=request.user)
         a = horarioListados.count()
         print(a)
@@ -330,13 +342,6 @@ class AlertaView(LoginRequiredMixin, View):
                     Camtelhorario.objects.get(idCamtel=ct, idHorario=h)
                 except Camtelhorario.DoesNotExist:
                     Camtelhorario.objects.create(idCamtel=ct, idHorario=h)
-        '''cmhListado = Camtelhorario.objects.filter(idCamtel__idUsuario=request.user).all()
-        for ch in cmhListado:
-            try:
-                Alerta.objects.get(idCamtelHorario=ch)
-            except Alerta.DoesNotExist:
-                Alerta.objects.create(idCamtelHorario=ch)
-        alertaListados = Alerta.objects.filter(idCamtelHorario__idCamtel__idUsuario=request.user).all()'''
         return render(request, "Alertas.html", {'camtel': camtelListados, 'telefono': telefonoListados,})
 
     def fullTime(request,idTelefono):
@@ -368,30 +373,8 @@ class FotoView(LoginRequiredMixin, View):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
 
-    '''def pruebaFoto(request):
-        foto1 = Foto.objects.all()
-
-        foto_paginator = Paginator(foto1, 5)
-
-        numero_pagina = request.GET.get('pagina')
-        pagina = foto_paginator.get_page(numero_pagina)
-
-        return render(request, "fotos.html", {"foto" : foto1, 'pagina': pagina})
-
-    def confirmarFoto(request, idFoto, confirmacion, pagina):
-        foto = Foto.objects.get(idFoto = idFoto)
-        foto.etiqueta = confirmacion
-        foto.save()
-
-
-        url = reverse('vibackend:pruebaFoto') + "?pagina=" + pagina
-        
-        return redirect(url)'''
-
-
     def pruebaFoto(request):
         foto1 = Foto.objects.filter(etiqueta__isnull=True)
-
         foto_paginator = Paginator(foto1, 5)
 
         numero_pagina = request.GET.get('pagina')
@@ -446,7 +429,3 @@ class FotoView(LoginRequiredMixin, View):
 
         foto = Foto.objects.filter(fecha__range=[pfinicio, pffin])
         return     
-    
-    
-    
-    
