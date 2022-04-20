@@ -22,7 +22,6 @@ from django.urls import reverse, reverse_lazy
 from django.core.files import File
 import time
 
-
 bot_token = '5265828925:AAHrKJS0mz0AnAciJxOSWQ53aQo69AizEfM'
 bot= telegram.ext.ExtBot(token= bot_token)
 stop_thread=''
@@ -275,6 +274,15 @@ class HorarioView(LoginRequiredMixin, View):
 
     def home(request):
         diaListados = Dia.objects.all()
+        b = diaListados.count()
+        if b < 7:
+            diaListados.objects.create(idDia=1,Dia="Lunes")
+            diaListados.objects.create(idDia=2,Dia="Martes")
+            diaListados.objects.create(idDia=3,Dia="Miercoles")
+            diaListados.objects.create(idDia=4,Dia="Jueves")
+            diaListados.objects.create(idDia=5,Dia="Viernes")
+            diaListados.objects.create(idDia=6,Dia="Sabado")
+            diaListados.objects.create(idDia=7,Dia="Domingo")
         horarioListados = Horario.objects.filter(idUsuario=request.user)
         a = horarioListados.count()
         print(a)
