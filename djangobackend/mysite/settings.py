@@ -79,23 +79,14 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
          'default': {
              'ENGINE': 'django.db.backends.mysql',
-             'OPTIONS': {
-                "init_command": "SET foreign_key_checks = 0;",
-               'read_default_file': os.path.join(BASE_DIR, 'my.cnf'),
-             }
+             'NAME': 'vigilancia_inteligente',
+             'USER': 'lau',
+             'PASSWORD': 'polotec',
+             'HOST': 'mysql',
+             'PORT': '3306'
          }
      }
 
-
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#       'NAME': 'Universidad.db',
-#    }
-#}
-
-# Password validation
-# https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
